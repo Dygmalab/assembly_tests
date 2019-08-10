@@ -1,4 +1,4 @@
-pyqt5
+pyqt5==5.12.2 # 5.12.3 breaks on windows
 pyserial
 pyinstaller
 pyreadline # for windows
