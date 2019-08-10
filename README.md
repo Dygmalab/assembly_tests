@@ -9,3 +9,9 @@
 
 * [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/magnet_calibrator)
 * [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/magnet_calibrator.exe)
+
+## Todo
+
+* handle no plugged in Neuron
+* handle replug Neuron
+* check sides are connected (esp for magnet calibrate)
