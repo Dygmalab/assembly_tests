@@ -7,8 +7,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 RAISE_VIDPID = '1209:2201'
 
-SERIAL_MAX_ATTEMPTS = 10 # serial is absolutely flakey
-
 class SerialPlug():
 
     def setup(self):
@@ -22,26 +20,53 @@ class SerialPlug():
             except serial.serialutil.SerialException:
                 return False
 
-    # communicate over serial
+#    # communicate over serial
+#    def run_cmd(self, cmd):
+#        output = ""
+#        logging.info(cmd)
+#
+#        try:
+#            self.ser.write (cmd + "\n") # must write \n with no delay or 10% chance not receive command correctly!
+#        except serial.writeTimeoutError:
+#            logging.warning("write timeout")
+#            return output
+#
+#        while True:
+#            resultLine = self.ser.readline()
+#
+#            if resultLine == "\r\n" or resultLine == "\n":
+#                resultLine = " "
+#            else:
+#                resultLine = resultLine.rstrip()
+#
+#            if resultLine == "." or resultLine == "":
+#                break
+#
+#            if resultLine:
+#                output += resultLine
+#
+#        logging.info(output)
+#        return output
+
     def run_cmd(self, cmd):
+
         output = ""
         logging.info(cmd)
-
         try:
-            self.ser.write (cmd + "\n") # must write \n with no delay or 10% chance not receive command correctly!
+            self.ser.write (str.encode(cmd + "\n")) # must write \n with no delay or 10% chance not receive command correctly!
         except serial.writeTimeoutError:
             logging.warning("write timeout")
             return output
 
         while True:
-            resultLine = self.ser.readline()
+            resultLine = self.ser.readline().decode('utf-8')
 
             if resultLine == "\r\n" or resultLine == "\n":
                 resultLine = " "
             else:
-                resultLine = resultLine.rstrip()
+                resultLine = resultLine.rstrip ()
 
-            if resultLine == "." or resultLine == "":
+            if resultLine == ".":
                 break
 
             if resultLine:
@@ -58,6 +83,7 @@ class App(QWidget):
 
         self.ser = SerialPlug()
         self.ser.setup()
+        self.ser.run_cmd("led.mode 8") # palette effect
         self.ser.run_cmd("led.setAll 0 0 0")
 
         self.left = 10
