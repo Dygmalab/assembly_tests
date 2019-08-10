@@ -1,0 +1,4 @@
+pyqt5
+pyserial
+pyinstaller
+pyreadline # for windows
