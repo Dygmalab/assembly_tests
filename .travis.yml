@@ -40,8 +40,10 @@ filter_secrets: false
 #cache: yarn
 install:
   - pip3 install -r light_controller/requirements.txt
+  - pip3 install -r magnet_calibrator/requirements.txt
 script:
   - pyinstaller -F light_controller/light_controller.py
+  - pyinstaller -F magnet_calibrator/magnet_calibrator.py
 after_script:
   - find dist build
   - pip3 install s3cmd
