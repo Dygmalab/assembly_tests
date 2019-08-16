@@ -7,4 +7,4 @@
 
 ## Todo
 
-* check sides are connected (esp for magnet calibrate)
+

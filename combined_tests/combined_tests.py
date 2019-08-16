@@ -63,6 +63,19 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.magnet_joined.setEnabled(True)
 
     # magnet stuff
+    # this gets called first
+    @pyqtSlot()
+    def get_joined(self):
+        joined = int(self.ser.run_cmd("hardware.joint"))
+        logging.info("joined = %d" % joined)
+        if joined > 0 and joined < 1000:
+            self.joined = joined
+            self.magnet_joined.setDisabled(True)
+            self.magnet_split.setEnabled(True)
+        else:
+            logging.warning("invalid joint value - is side plugged in?")
+
+    # and this after
     @pyqtSlot()
     def get_split(self):
         self.split = int(self.ser.run_cmd("hardware.joint"))
@@ -74,15 +87,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.threshold = (self.joined - self.split) / 2 + self.split;
         logging.info("new threshold = %d" % self.threshold)
         self.ser.run_cmd("joint.threshold %d" % self.threshold)
-
-
-    @pyqtSlot()
-    def get_joined(self):
-        self.joined = int(self.ser.run_cmd("hardware.joint"))
-        logging.info("joined = %d" % self.joined)
-        self.magnet_joined.setDisabled(True)
-        self.magnet_split.setEnabled(True)
-
 
     def checkSerialStatus(self):
         self.ser.check_serial_status()
