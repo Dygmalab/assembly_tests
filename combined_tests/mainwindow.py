@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(792, 537)
+        MainWindow.resize(512, 482)
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.logoLabel = QtWidgets.QLabel(self.centralWidget)
         self.logoLabel.setText("")
-        self.logoLabel.setPixmap(QtGui.QPixmap("Dygma_logo_color.png"))
+        self.logoLabel.setPixmap(QtGui.QPixmap(":/images/Dygma_logo_color.png"))
         self.logoLabel.setObjectName("logoLabel")
         self.verticalLayout.addWidget(self.logoLabel)
         self.tabWidget = QtWidgets.QTabWidget(self.centralWidget)
@@ -60,6 +60,9 @@ class Ui_MainWindow(object):
         self.light_green = QtWidgets.QPushButton(self.light)
         self.light_green.setObjectName("light_green")
         self.gridLayout.addWidget(self.light_green, 1, 0, 1, 1)
+        self.light_off = QtWidgets.QPushButton(self.light)
+        self.light_off.setObjectName("light_off")
+        self.gridLayout.addWidget(self.light_off, 4, 0, 1, 1)
         self.verticalLayout_3.addLayout(self.gridLayout)
         self.tabWidget.addTab(self.light, "")
         self.magnet = QtWidgets.QWidget()
@@ -72,9 +75,11 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setSpacing(6)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.magnet_joined = QtWidgets.QPushButton(self.magnet)
+        self.magnet_joined.setEnabled(True)
         self.magnet_joined.setObjectName("magnet_joined")
         self.gridLayout_2.addWidget(self.magnet_joined, 0, 0, 1, 1)
         self.magnet_split = QtWidgets.QPushButton(self.magnet)
+        self.magnet_split.setEnabled(False)
         self.magnet_split.setObjectName("magnet_split")
         self.gridLayout_2.addWidget(self.magnet_split, 1, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout_2)
@@ -91,7 +96,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 792, 27))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 512, 27))
         self.menuBar.setObjectName("menuBar")
         self.menuDygma_Raise_Assembly_Tests = QtWidgets.QMenu(self.menuBar)
         self.menuDygma_Raise_Assembly_Tests.setObjectName("menuDygma_Raise_Assembly_Tests")
@@ -102,7 +107,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -112,9 +117,11 @@ class Ui_MainWindow(object):
         self.light_red.setText(_translate("MainWindow", "Red"))
         self.light_blue.setText(_translate("MainWindow", "Blue"))
         self.light_green.setText(_translate("MainWindow", "Green"))
+        self.light_off.setText(_translate("MainWindow", "Off"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.light), _translate("MainWindow", "Light control"))
         self.magnet_joined.setText(_translate("MainWindow", "Keyboard is Joined"))
         self.magnet_split.setText(_translate("MainWindow", "Keyboard is Split"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.magnet), _translate("MainWindow", "Magnet Calibrate"))
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Dygma Raise Assembly Tests"))
 
+import image_rc

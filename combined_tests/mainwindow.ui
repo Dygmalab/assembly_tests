@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>792</width>
-    <height>537</height>
+    <width>512</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>Dygma_logo_color.png</pixmap>
+         <pixmap resource="image.qrc">:/images/Dygma_logo_color.png</pixmap>
         </property>
        </widget>
       </item>
@@ -45,7 +45,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="light">
          <attribute name="title">
@@ -82,6 +82,13 @@
               </property>
              </widget>
             </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="light_off">
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -95,6 +102,9 @@
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
              <widget class="QPushButton" name="magnet_joined">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
                <string>Keyboard is Joined</string>
               </property>
@@ -102,6 +112,9 @@
             </item>
             <item row="1" column="0">
              <widget class="QPushButton" name="magnet_split">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Keyboard is Split</string>
               </property>
@@ -110,8 +123,6 @@
            </layout>
           </item>
          </layout>
-         <zorder>plainTextEdit</zorder>
-         <zorder>gridLayoutWidget_2</zorder>
         </widget>
        </widget>
       </item>
@@ -134,7 +145,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>792</width>
+     <width>512</width>
      <height>27</height>
     </rect>
    </property>
@@ -148,6 +159,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="image.qrc"/>
+ </resources>
  <connections/>
 </ui>

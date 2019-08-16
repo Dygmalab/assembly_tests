@@ -31,6 +31,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.light_green.clicked.connect(lambda: self.on_click("0 255 0"))
         self.light_blue.clicked.connect(lambda: self.on_click("0 0 255"))
         self.light_white.clicked.connect(lambda: self.on_click("255 255 255"))
+        self.light_off.clicked.connect(lambda: self.on_click("0 0 0"))
 
         self.magnet_split.clicked.connect(self.get_split)
         self.magnet_joined.clicked.connect(self.get_joined)
