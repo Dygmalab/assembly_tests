@@ -1,17 +1,10 @@
 # assembly line tests for Dygma Raise
 
-## Light controller
+## Combined tests
 
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/light_controller)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/light_controller.exe)
-
-## Magnet calibrator
-
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/magnet_calibrator)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/magnet_calibrator.exe)
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/combined_tests)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/cobined_tests.exe)
 
 ## Todo
 
-* handle no plugged in Neuron
-* handle replug Neuron
 * check sides are connected (esp for magnet calibrate)
