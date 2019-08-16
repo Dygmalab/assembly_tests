@@ -23,6 +23,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
     def __init__(self):
         super(self.__class__, self).__init__()
+
+    def setup(self):
         self.setupUi(self) # gets defined in the UI file
 
         self.ser = SerialPlug()
@@ -37,6 +39,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.magnet_joined.clicked.connect(self.get_joined)
 
         self.tabWidget.currentChanged.connect(self.tabChange)
+        self.tabWidget.setCurrentIndex(TABS.index("light"))
 
         timer = QTimer(self)
         self.last_serial_check = None
@@ -56,13 +59,15 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.setAll 0 0 0")
         elif TABS[index] == "magnet":
             self.ser.run_cmd("led.mode 6") # joint effect mode
-            self.split = 300
-            self.joined = 600
-            self.update_thresh()
-            pass
+            self.magnet_split.setDisabled(True)
+            self.magnet_joined.setEnabled(True)
 
     # magnet stuff
-    def update_thresh(self):
+    @pyqtSlot()
+    def get_split(self):
+        self.split = int(self.ser.run_cmd("hardware.joint"))
+        logging.info("split = %d" % self.split)
+        self.magnet_split.setDisabled(True)
         if(self.split > self.joined):
             self.threshold = (self.split - self.joined) / 2 + self.joined;
         else:
@@ -70,17 +75,14 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         logging.info("new threshold = %d" % self.threshold)
         self.ser.run_cmd("joint.threshold %d" % self.threshold)
 
-    @pyqtSlot()
-    def get_split(self):
-        self.split = int(self.ser.run_cmd("hardware.joint"))
-        logging.info("split = %d" % self.split)
-        self.update_thresh()
 
     @pyqtSlot()
     def get_joined(self):
         self.joined = int(self.ser.run_cmd("hardware.joint"))
         logging.info("joined = %d" % self.joined)
-        self.update_thresh()
+        self.magnet_joined.setDisabled(True)
+        self.magnet_split.setEnabled(True)
+
 
     def checkSerialStatus(self):
         self.ser.check_serial_status()
@@ -131,6 +133,8 @@ if __name__ == '__main__':
     qtlog = QTLogHandler(form)
     qtlog.setLevel(logging.INFO)
     log.addHandler(qtlog)
+
+    form.setup()
 
     ret = app.exec_()
     logging.info("finished")
