@@ -38,11 +38,10 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.tabWidget.currentChanged.connect(self.tabChange)
 
         timer = QTimer(self)
+        self.last_serial_check = None
         timer.timeout.connect(self.checkSerialStatus)
         timer.start(1000)
         self.checkSerialStatus()
-
-        self.tabChange(self.tabWidget.currentIndex())
 
         self.show()
 
@@ -50,7 +49,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         if not self.ser.is_connected():
             # ignore tab change because it was triggered by the disabling of the tab in checkSerialStatus()
             return
-        logging.info("tab change to %s" % TABS[index])
+        logging.debug("tab change to %s" % TABS[index])
         if TABS[index] == "light":
             self.ser.run_cmd("led.mode 8") # palette effect
             self.ser.run_cmd("led.setAll 0 0 0")
@@ -85,8 +84,23 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def checkSerialStatus(self):
         self.ser.check_serial_status()
         self.statusBar.showMessage(self.ser.get_status_message())
-        for index, tab_name in enumerate(TABS):
-            self.tabWidget.setTabEnabled(index, self.ser.is_connected());
+
+        # disable the tabs if no serial
+        if not self.ser.is_connected():
+            current_index = self.tabWidget.currentIndex()
+            for index, tab_name in enumerate(TABS):
+                self.tabWidget.setTabEnabled(index, False)
+            self.tabWidget.setCurrentIndex(current_index)
+
+        # if has just come back on line
+        if self.ser.is_connected() and not self.last_serial_check:
+            for index, tab_name in enumerate(TABS):
+                self.tabWidget.setTabEnabled(index, True)
+
+            # get the keyboard ready for the test
+            self.tabChange(self.tabWidget.currentIndex())
+
+        self.last_serial_check = self.ser.is_connected()
 
     @pyqtSlot()
     def on_click(self, color_string):
