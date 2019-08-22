@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>Dygma_logo_color.png</file>
+    </qresource>
+</RCC>
