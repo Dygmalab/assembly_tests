@@ -16,38 +16,16 @@ matrix:
         - python -m pip install --upgrade pip
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
-# doesn't work
-#addons: 
-#    artifacts:
-#        debug: true
-#        paths: 
-#        - build
-#        - dist
-#
-#
-# This (filter_secrets) is generally unsafe, but we only run builds for master,
-# so it is acceptable. If we remove the branch restriction, remove this too.
-# If Windows builds on Travis are fixed, and work when secrets are in use,
-# remove this too.
-filter_secrets: false
-#matrix:
-#  allow_failures:
-#    - os: windows
-#env:
-#  - YARN_GPG=no
-#if: branch = master OR tag IS present
-#dist: xenial
-#addons:
-#  apt:
-#    packages:
-#      - libudev-dev
-#cache: yarn
 install:
   - pip3 install -r combined_tests/requirements.txt
   - pip3 install -r side_fw_updater/requirements.txt
 script:
-  - pyinstaller -F combined_tests/combined_tests.py
-  - pyinstaller -F side_fw_updater/side_fw_updater.py
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests         ; fi
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater        ; fi
+  - if [ $TRAVIS_OS_NAME == "win" ];   then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.exe     ; fi
+  - if [ $TRAVIS_OS_NAME == "win" ];   then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater.exe    ; fi
+  - if [ $TRAVIS_OS_NAME == "macos" ]; then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.dmg     ; fi
+  - if [ $TRAVIS_OS_NAME == "macos" ]; then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater.dmg    ; fi
 after_script:
   - find dist build
   - pip3 install s3cmd
