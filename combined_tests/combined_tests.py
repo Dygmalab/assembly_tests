@@ -7,7 +7,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "magnet"]
+TABS = ["light", "magnet", "led" ]
+
+left_keys        = 33 # 32 for ANSI
+right_keys       = 36
+left_led   = 30
+right_led  = 32
+led_start  = left_keys + right_keys
+huble_leds       = 1
+led_count = left_keys + right_keys + left_led + right_led + huble_leds # 130 + 1 for the huble
 
 class QTLogHandler(logging.StreamHandler):
 
@@ -38,6 +46,12 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.magnet_split.clicked.connect(self.get_split)
         self.magnet_joined.clicked.connect(self.get_joined)
 
+        self.current_led = 0
+        self.last_led = None
+        self.led_num.display(self.current_led)
+        self.led_next.clicked.connect(lambda: self.next_led(+1))
+        self.led_prev.clicked.connect(lambda: self.next_led(-1))
+
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.tabWidget.setCurrentIndex(TABS.index("light"))
 
@@ -48,6 +62,24 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.checkSerialStatus()
 
         self.show()
+    
+    def next_led(self, increment):
+        self.current_led += increment
+
+        if self.current_led >= led_count:
+            self.current_led = 0
+        if self.current_led < 0:
+            self.current_led = led_count - 1
+
+        self.led_num.display(self.current_led)
+        self.ser.run_cmd("led.at %d 255 255 255" % self.current_led)
+
+        if self.last_led is not None:
+            self.ser.run_cmd("led.at %d 0 0 0" % self.last_led)
+
+        self.last_led = self.current_led
+
+
 
     def tabChange(self, index):
         if not self.ser.is_connected():
@@ -61,6 +93,10 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.mode 6") # joint effect mode
             self.magnet_split.setDisabled(True)
             self.magnet_joined.setEnabled(True)
+        elif TABS[index] == "led":
+            self.ser.run_cmd("led.mode 8") # joint effect mode
+            self.ser.run_cmd("led.setAll 0 0 0")
+            self.next_led(0)
 
     # magnet stuff
     # this gets called first
