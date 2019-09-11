@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>546</width>
-    <height>480</height>
+    <width>673</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,12 +44,18 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="light">
          <attribute name="title">
-          <string>Light control</string>
+          <string>All LEDs</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
@@ -93,40 +99,9 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="magnet">
-         <attribute name="title">
-          <string>Magnet Calibrate</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="0">
-             <widget class="QPushButton" name="magnet_joined">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="text">
-               <string>Keyboard is Joined</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="magnet_split">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Keyboard is Split</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
         <widget class="QWidget" name="individualleds">
          <attribute name="title">
-          <string>individual LED</string>
+          <string>Single LEDs</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -158,9 +133,53 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="magnet">
+         <attribute name="title">
+          <string>Magnet Calibrate</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="magnet_joined">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Keyboard is Joined</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="magnet_split">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Keyboard is Split</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="defaults_tab">
          <attribute name="title">
-          <string>load defaults</string>
+          <string>Load Defaults</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -171,6 +190,105 @@
                <string>Load Defaults (will wipe all settings)</string>
               </property>
              </widget>
+            </item>
+            <item row="1" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="side_firmware">
+         <attribute name="title">
+          <string>Side Firmware</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="verify_left">
+              <property name="text">
+               <string>Verify Left</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="verify_right">
+              <property name="text">
+               <string>Verify Right</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="flash_right">
+              <property name="text">
+               <string>Flash Right</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="flash_left">
+              <property name="text">
+               <string>Flash Left</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="focus">
+         <attribute name="title">
+          <string>Focus</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Type commands below (type help to show available commands)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLineEdit" name="focus_cmd"/>
             </item>
            </layout>
           </item>
@@ -197,18 +315,30 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>546</width>
+     <width>673</width>
      <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDygma_Raise_Assembly_Tests">
     <property name="title">
-     <string>Dygma Raise Assembly Tests</string>
+     <string>Logs</string>
     </property>
+    <addaction name="actionCopy_log"/>
+    <addaction name="actionClear_log"/>
    </widget>
    <addaction name="menuDygma_Raise_Assembly_Tests"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionCopy_log">
+   <property name="text">
+    <string>Copy log</string>
+   </property>
+  </action>
+  <action name="actionClear_log">
+   <property name="text">
+    <string>Clear log</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

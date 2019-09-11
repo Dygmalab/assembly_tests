@@ -9,7 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "magnet", "led", "load defaults" ]
+TABS = ["light", "magnet", "led", "load defaults", "sidefw", "focus" ]
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
@@ -36,15 +36,16 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
     def setup(self):
         self.setupUi(self) # gets defined in the UI file
+        self.clipboard = QApplication.clipboard()
 
         self.ser = SerialPlug()
 
         # led tab buttons
-        self.light_red.clicked.connect(lambda: self.on_click("255 0 0"))
-        self.light_green.clicked.connect(lambda: self.on_click("0 255 0"))
-        self.light_blue.clicked.connect(lambda: self.on_click("0 0 255"))
-        self.light_white.clicked.connect(lambda: self.on_click("255 255 255"))
-        self.light_off.clicked.connect(lambda: self.on_click("0 0 0"))
+        self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))
+        self.light_green.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 255 0"))
+        self.light_blue.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 0 255"))
+        self.light_white.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 255 255"))
+        self.light_off.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 0 0"))
 
         # magnet buttons
         self.magnet_split.clicked.connect(self.get_split)
@@ -60,9 +61,22 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # load defaults
         self.load_defaults.clicked.connect(lambda: self.defaults())
 
+        # side fw updater
+        self.verify_left.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_left_side"))
+        self.verify_right.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_right_side"))
+        self.flash_left.clicked.connect(lambda: self.run_serial_cmd("hardware.flash_left_side"))
+        self.flash_right.clicked.connect(lambda: self.run_serial_cmd("hardware.flash_right_side"))
+
+        # focus cmds
+        self.focus_cmd.returnPressed.connect(lambda: self.run_focus_cmd())
+
         # tab connections
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.tabWidget.setCurrentIndex(TABS.index("light"))
+
+        # log copy menu
+        self.actionCopy_log.triggered.connect(lambda: self.copy_log())
+        self.actionClear_log.triggered.connect(lambda: self.clear_log())
 
         # status bar timer that also does serial connection
         timer = QTimer(self)
@@ -72,6 +86,15 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.checkSerialStatus()
 
         self.show()
+
+    def copy_log(self):
+        logging.debug("copy log")
+        self.clipboard.clear(mode=self.clipboard.Clipboard )
+        self.clipboard.setText(self.log_messages.toPlainText(), mode=self.clipboard.Clipboard)
+
+    def clear_log(self):
+        logging.debug("clear log")
+        self.log_messages.clear()
     
     def defaults(self):
         settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
@@ -169,8 +192,13 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.last_serial_check = self.ser.is_connected()
 
     @pyqtSlot()
-    def on_click(self, color_string):
-        self.ser.run_cmd("led.setAll %s" % color_string)
+    def run_serial_cmd(self, command):
+        self.ser.run_cmd(command)
+
+    @pyqtSlot()
+    def run_focus_cmd(self):
+        self.run_serial_cmd(self.focus_cmd.text())
+        self.focus_cmd.clear()
 
     def add_log(self, msg):
         self.log_messages.appendPlainText(msg)
