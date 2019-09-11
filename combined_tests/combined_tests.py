@@ -2,6 +2,7 @@ import logging
 import argparse
 import mainwindow
 import sys
+import os
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -75,9 +76,14 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def defaults(self):
         settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
                     "idleLeds.idleTimeLimit", "led.mode"]
+        try:
+           wd = sys._MEIPASS # if running inside pyinstaller
+        except AttributeError:
+           wd = os.getcwd()
 
         for conf in settings:
-            with open("defaults/DVT" + conf, 'r') as fh:
+            file_path = os.path.join(wd, 'defaults', "DVT" + conf)
+            with open(file_path, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
                 self.ser.run_cmd("%s %s" % (conf, data))
