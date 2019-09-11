@@ -9,7 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "magnet", "led", "load defaults", "sidefw", "focus" ]
+TABS = ["light", "led", "magnet", "load defaults", "sidefw", "focus" ]
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
