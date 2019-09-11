@@ -19,7 +19,7 @@ matrix:
 install:
   - pip3 install -r combined_tests/requirements.txt
 script:
-    - if [ $TRAVIS_OS_NAME == "linux" ];   then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests     --add-data defaults:defaults; fi
+    - if [ $TRAVIS_OS_NAME == "linux" ];   then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests     --add-data defaults:defaults --debug all; fi
     - if [ $TRAVIS_OS_NAME == "windows" ]; then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.exe --add-data 'defaults;defaults'; fi
     - if [ $TRAVIS_OS_NAME == "osx" ];     then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.dmg --add-data defaults:defaults; fi
 after_script:
