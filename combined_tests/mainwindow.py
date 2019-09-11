@@ -2,16 +2,17 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(489, 470)
+        MainWindow.resize(546, 480)
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -84,28 +85,42 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.magnet_split, 1, 0, 1, 1)
         self.horizontalLayout.addLayout(self.gridLayout_2)
         self.tabWidget.addTab(self.magnet, "")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab)
+        self.individualleds = QtWidgets.QWidget()
+        self.individualleds.setObjectName("individualleds")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.individualleds)
         self.horizontalLayout_2.setContentsMargins(11, 11, 11, 11)
         self.horizontalLayout_2.setSpacing(6)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.gridLayout_4 = QtWidgets.QGridLayout()
         self.gridLayout_4.setSpacing(6)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.led_next = QtWidgets.QPushButton(self.tab)
+        self.led_next = QtWidgets.QPushButton(self.individualleds)
         self.led_next.setEnabled(True)
         self.led_next.setObjectName("led_next")
         self.gridLayout_4.addWidget(self.led_next, 0, 0, 1, 1)
-        self.led_prev = QtWidgets.QPushButton(self.tab)
+        self.led_prev = QtWidgets.QPushButton(self.individualleds)
         self.led_prev.setEnabled(True)
         self.led_prev.setObjectName("led_prev")
         self.gridLayout_4.addWidget(self.led_prev, 1, 0, 1, 1)
-        self.led_num = QtWidgets.QLCDNumber(self.tab)
+        self.led_num = QtWidgets.QLCDNumber(self.individualleds)
         self.led_num.setObjectName("led_num")
         self.gridLayout_4.addWidget(self.led_num, 2, 0, 1, 1)
         self.horizontalLayout_2.addLayout(self.gridLayout_4)
-        self.tabWidget.addTab(self.tab, "")
+        self.tabWidget.addTab(self.individualleds, "")
+        self.defaults_tab = QtWidgets.QWidget()
+        self.defaults_tab.setObjectName("defaults_tab")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.defaults_tab)
+        self.horizontalLayout_3.setContentsMargins(11, 11, 11, 11)
+        self.horizontalLayout_3.setSpacing(6)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setSpacing(6)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.load_defaults = QtWidgets.QPushButton(self.defaults_tab)
+        self.load_defaults.setObjectName("load_defaults")
+        self.gridLayout_3.addWidget(self.load_defaults, 0, 0, 1, 1)
+        self.horizontalLayout_3.addLayout(self.gridLayout_3)
+        self.tabWidget.addTab(self.defaults_tab, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.log_messages = QtWidgets.QPlainTextEdit(self.centralWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -118,7 +133,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 489, 27))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 546, 22))
         self.menuBar.setObjectName("menuBar")
         self.menuDygma_Raise_Assembly_Tests = QtWidgets.QMenu(self.menuBar)
         self.menuDygma_Raise_Assembly_Tests.setObjectName("menuDygma_Raise_Assembly_Tests")
@@ -129,7 +144,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -146,7 +161,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.magnet), _translate("MainWindow", "Magnet Calibrate"))
         self.led_next.setText(_translate("MainWindow", "Next"))
         self.led_prev.setText(_translate("MainWindow", "Prev"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "individual LED"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.individualleds), _translate("MainWindow", "individual LED"))
+        self.load_defaults.setText(_translate("MainWindow", "Load Defaults (will wipe all settings)"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.defaults_tab), _translate("MainWindow", "load defaults"))
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Dygma Raise Assembly Tests"))
+
 
 import image_rc

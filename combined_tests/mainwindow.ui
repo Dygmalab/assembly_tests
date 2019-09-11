@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>470</height>
+    <width>546</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="light">
          <attribute name="title">
@@ -124,7 +124,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="individualleds">
          <attribute name="title">
           <string>individual LED</string>
          </attribute>
@@ -158,6 +158,24 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="defaults_tab">
+         <attribute name="title">
+          <string>load defaults</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="load_defaults">
+              <property name="text">
+               <string>Load Defaults (will wipe all settings)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
@@ -179,8 +197,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>489</width>
-     <height>27</height>
+     <width>546</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDygma_Raise_Assembly_Tests">

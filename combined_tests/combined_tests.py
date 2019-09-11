@@ -7,7 +7,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "magnet", "led" ]
+TABS = ["light", "magnet", "led", "load defaults" ]
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
@@ -37,24 +37,32 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.ser = SerialPlug()
 
+        # led tab buttons
         self.light_red.clicked.connect(lambda: self.on_click("255 0 0"))
         self.light_green.clicked.connect(lambda: self.on_click("0 255 0"))
         self.light_blue.clicked.connect(lambda: self.on_click("0 0 255"))
         self.light_white.clicked.connect(lambda: self.on_click("255 255 255"))
         self.light_off.clicked.connect(lambda: self.on_click("0 0 0"))
 
+        # magnet buttons
         self.magnet_split.clicked.connect(self.get_split)
         self.magnet_joined.clicked.connect(self.get_joined)
 
+        # individual led buttons and setup
         self.current_led = 0
         self.last_led = None
         self.led_num.display(self.current_led)
         self.led_next.clicked.connect(lambda: self.next_led(+1))
         self.led_prev.clicked.connect(lambda: self.next_led(-1))
 
+        # load defaults
+        self.load_defaults.clicked.connect(lambda: self.defaults())
+
+        # tab connections
         self.tabWidget.currentChanged.connect(self.tabChange)
         self.tabWidget.setCurrentIndex(TABS.index("light"))
 
+        # status bar timer that also does serial connection
         timer = QTimer(self)
         self.last_serial_check = None
         timer.timeout.connect(self.checkSerialStatus)
@@ -63,6 +71,16 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.show()
     
+    def defaults(self):
+        settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
+                    "idleLeds.idleTimeLimit", "led.mode"]
+
+        for conf in settings:
+            with open("./defaults/DVT" + conf, 'r') as fh:
+                data = fh.readline()
+                data = data.strip()
+                self.ser.run_cmd("%s %s" % (conf, data))
+
     def next_led(self, increment):
         self.current_led += increment
 
@@ -78,8 +96,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.at %d 0 0 0" % self.last_led)
 
         self.last_led = self.current_led
-
-
 
     def tabChange(self, index):
         if not self.ser.is_connected():
