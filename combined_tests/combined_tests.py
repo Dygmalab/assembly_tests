@@ -76,7 +76,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
                     "idleLeds.idleTimeLimit", "led.mode"]
 
         for conf in settings:
-            with open("./defaults/DVT" + conf, 'r') as fh:
+            with open("defaults/DVT" + conf, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
                 self.ser.run_cmd("%s %s" % (conf, data))
