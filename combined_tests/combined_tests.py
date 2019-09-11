@@ -1,4 +1,5 @@
 import logging
+import argparse
 import mainwindow
 import sys
 
@@ -170,17 +171,23 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description="Dygma Raise test jig controller")
+    parser.add_argument('--verbose', '-v', action='count', default=1)
+    parser.add_argument('--chinese', action='store_const', const=True) # doesn't do anything yet
+    parser.add_argument('--defaults', action='store_const', const=True)
+    args = parser.parse_args()
+
+    args.verbose = 70 - (10*args.verbose) if args.verbose > 0 else 0
+    logging.basicConfig(level=args.verbose, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
     # get logging started
-    log_format = logging.Formatter('%(asctime)s - %(levelname)-8s - %(message)s')
     log = logging.getLogger('')
     log.setLevel(logging.DEBUG)
 
     # create console handler and set level to info
     ch = logging.StreamHandler()
     ch.setLevel(logging.INFO)
-
-    # create formatter for console
-    ch.setFormatter(log_format)
     log.addHandler(ch)
 
     app = QApplication(sys.argv)
@@ -192,6 +199,10 @@ if __name__ == '__main__':
 
     form.setup()
 
-    ret = app.exec_()
-    logging.info("finished")
-    sys.exit(ret)
+    # allow override gui with specific arguments
+    if args.defaults:
+        form.defaults()
+    else:
+        ret = app.exec_()
+        logging.info("finished")
+        sys.exit(ret)
