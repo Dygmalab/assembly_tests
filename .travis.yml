@@ -18,14 +18,10 @@ matrix:
 
 install:
   - pip3 install -r combined_tests/requirements.txt
-  - pip3 install -r side_fw_updater/requirements.txt
 script:
     - if [ $TRAVIS_OS_NAME == "linux" ];   then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests     --add-data defaults:defaults; fi
-    - if [ $TRAVIS_OS_NAME == "linux" ];   then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater                                ; fi
     - if [ $TRAVIS_OS_NAME == "windows" ]; then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.exe --add-data 'defaults;defaults'; fi
-    - if [ $TRAVIS_OS_NAME == "windows" ]; then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater.exe                            ; fi
     - if [ $TRAVIS_OS_NAME == "osx" ];     then pyinstaller -F combined_tests/combined_tests.py   -n combined_tests.dmg --add-data defaults:defaults; fi
-    - if [ $TRAVIS_OS_NAME == "osx" ];     then pyinstaller -F side_fw_updater/side_fw_updater.py -n side_fw_updater.dmg                            ; fi
 after_script:
   - find dist build
   - pip3 install s3cmd
