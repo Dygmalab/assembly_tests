@@ -177,6 +177,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.log_messages.sizePolicy().hasHeightForWidth())
         self.log_messages.setSizePolicy(sizePolicy)
+        self.log_messages.setReadOnly(True)
         self.log_messages.setObjectName("log_messages")
         self.verticalLayout.addWidget(self.log_messages)
         self.verticalLayout_2.addLayout(self.verticalLayout)
