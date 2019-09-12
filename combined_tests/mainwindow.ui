@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>532</height>
+    <width>714</width>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="light">
          <attribute name="title">
@@ -146,7 +146,7 @@
                <bool>true</bool>
               </property>
               <property name="text">
-               <string>Keyboard is Joined</string>
+               <string>Press when keyboard is Joined</string>
               </property>
              </widget>
             </item>
@@ -156,7 +156,26 @@
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>Keyboard is Split</string>
+               <string>Press when keyboard is Split</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QProgressBar" name="magnet_level">
+              <property name="minimum">
+               <number>500</number>
+              </property>
+              <property name="maximum">
+               <number>800</number>
+              </property>
+              <property name="value">
+               <number>600</number>
+              </property>
+              <property name="textVisible">
+               <bool>true</bool>
+              </property>
+              <property name="format">
+               <string>%v</string>
               </property>
              </widget>
             </item>
@@ -294,6 +313,74 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="info_tab">
+         <attribute name="title">
+          <string>Info</string>
+         </attribute>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Keyscan</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Layout</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Firmware version</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QLabel" name="keyscan_label">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="layout_label">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="version_label">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
@@ -318,7 +405,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>673</width>
+     <width>714</width>
      <height>22</height>
     </rect>
    </property>

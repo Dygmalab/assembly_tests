@@ -9,7 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "led", "magnet", "load defaults", "sidefw", "focus" ]
+TABS = ["light", "led", "magnet", "load defaults", "sidefw", "focus", "info" ]
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
@@ -39,6 +39,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.clipboard = QApplication.clipboard()
 
         self.ser = SerialPlug()
+
 
         # led tab buttons
         self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))
@@ -143,6 +144,10 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
             self.next_led(0)
+        elif TABS[index] == "info":
+            self.version_label.setText(self.run_serial_cmd("hardware.firmware"))
+            self.keyscan_label.setText(self.run_serial_cmd("hardware.keyscan"))
+            self.layout_label.setText(self.run_serial_cmd("hardware.layout"))
 
     # magnet stuff
     # this gets called first
@@ -191,9 +196,13 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.last_serial_check = self.ser.is_connected()
 
+        # update the magnet level if on the magnet page
+        if TABS[self.tabWidget.currentIndex()] == "magnet":
+            self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
+
     @pyqtSlot()
     def run_serial_cmd(self, command):
-        self.ser.run_cmd(command)
+        return self.ser.run_cmd(command)
 
     @pyqtSlot()
     def run_focus_cmd(self):
