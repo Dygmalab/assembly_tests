@@ -9,7 +9,16 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TABS = ["light", "led", "magnet", "load defaults", "sidefw", "focus", "info" ]
+TAB_DEFS = [ 
+    { "name": "light",          "conn": "fw" },
+    { "name": "led",            "conn": "fw" },
+    { "name": "magnet",         "conn": "fw" },
+    { "name": "load defaults",  "conn": "fw" },
+    { "name": "neuronfw",       "conn": "bl" },
+    { "name": "sidefw",         "conn": "fw" },
+    { "name": "focus",          "conn": "fw" },
+    { "name": "info",           "conn": "fw" },
+    ]
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
@@ -40,6 +49,11 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.ser = SerialPlug()
 
+        # working directory
+        try:
+           self.wd = sys._MEIPASS # if running inside pyinstaller
+        except AttributeError:
+           self.wd = os.getcwd()
 
         # led tab buttons
         self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))
@@ -72,18 +86,21 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.focus_cmd.returnPressed.connect(lambda: self.run_focus_cmd())
 
         # tab connections
-        self.tabWidget.currentChanged.connect(self.tabChange)
-        self.tabWidget.setCurrentIndex(TABS.index("light"))
+        self.tabWidget.tabBarClicked.connect(self.tabChange) # only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
+        self.tabWidget.setCurrentIndex(0)
 
         # log copy menu
         self.actionCopy_log.triggered.connect(lambda: self.copy_log())
         self.actionClear_log.triggered.connect(lambda: self.clear_log())
 
+        # neuron fw
+        self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware())
+
         # status bar timer that also does serial connection
-        timer = QTimer(self)
+        self.status_timer = QTimer(self)
         self.last_serial_check = None
-        timer.timeout.connect(self.checkSerialStatus)
-        timer.start(1000)
+        self.status_timer.timeout.connect(self.checkSerialStatus)
+        self.status_timer.start(1000)
         self.checkSerialStatus()
 
         self.show()
@@ -96,17 +113,16 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def clear_log(self):
         logging.debug("clear log")
         self.log_messages.clear()
-    
+   
+    def bossa_update_firmware(self):
+        logging.info("starting BOSSA firmware update")
+
     def defaults(self):
         settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
                     "idleLeds.idleTimeLimit", "led.mode"]
-        try:
-           wd = sys._MEIPASS # if running inside pyinstaller
-        except AttributeError:
-           wd = os.getcwd()
 
         for conf in settings:
-            file_path = os.path.join(wd, 'defaults', "DVT" + conf)
+            file_path = os.path.join(self.wd, 'defaults', "DVT" + conf)
             with open(file_path, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
@@ -129,25 +145,30 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.last_led = self.current_led
 
     def tabChange(self, index):
-        if not self.ser.is_connected():
-            # ignore tab change because it was triggered by the disabling of the tab in checkSerialStatus()
-            return
-        logging.debug("tab change to %s" % TABS[index])
-        if TABS[index] == "light":
+        logging.debug("tab change to %s" % TAB_DEFS[index]["name"])
+        if TAB_DEFS[index]["name"] == "light":
             self.ser.run_cmd("led.mode 8") # palette effect
             self.ser.run_cmd("led.setAll 0 0 0")
-        elif TABS[index] == "magnet":
+        elif TAB_DEFS[index]["name"] == "magnet":
             self.ser.run_cmd("led.mode 6") # joint effect mode
             self.magnet_split.setDisabled(True)
             self.magnet_joined.setEnabled(True)
-        elif TABS[index] == "led":
+        elif TAB_DEFS[index]["name"] == "led":
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
             self.next_led(0)
-        elif TABS[index] == "info":
+        elif TAB_DEFS[index]["name"] == "info":
             self.version_label.setText(self.run_serial_cmd("hardware.firmware"))
             self.keyscan_label.setText(self.run_serial_cmd("hardware.keyscan"))
             self.layout_label.setText(self.run_serial_cmd("hardware.layout"))
+        elif TAB_DEFS[index]["name"] == "neuronfw":
+            pass
+
+        # connection mode depends on the tab
+        if TAB_DEFS[index]["conn"] == 'fw':
+            self.ser.find_keyboard()
+        elif TAB_DEFS[index]["conn"] == 'bl':
+            self.ser.find_bootloader()
 
     # magnet stuff
     # this gets called first
@@ -175,6 +196,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         logging.info("new threshold = %d" % self.threshold)
         self.ser.run_cmd("joint.threshold %d" % self.threshold)
 
+    # called regularly by the timer
     def checkSerialStatus(self):
         self.ser.check_serial_status()
         self.statusBar.showMessage(self.ser.get_status_message())
@@ -182,13 +204,13 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # disable the tabs if no serial
         if not self.ser.is_connected():
             current_index = self.tabWidget.currentIndex()
-            for index, tab_name in enumerate(TABS):
+            for index, tab_config in enumerate(TAB_DEFS):
                 self.tabWidget.setTabEnabled(index, False)
             self.tabWidget.setCurrentIndex(current_index)
 
         # if has just come back on line
         if self.ser.is_connected() and not self.last_serial_check:
-            for index, tab_name in enumerate(TABS):
+            for index, tab_confige in enumerate(TAB_DEFS):
                 self.tabWidget.setTabEnabled(index, True)
 
             # get the keyboard ready for the test
@@ -197,7 +219,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.last_serial_check = self.ser.is_connected()
 
         # update the magnet level if on the magnet page
-        if TABS[self.tabWidget.currentIndex()] == "magnet":
+        if TAB_DEFS[self.tabWidget.currentIndex()]["name"] == "magnet" and self.ser.is_connected():
             self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
 
     @pyqtSlot()

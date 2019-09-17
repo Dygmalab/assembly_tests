@@ -2,17 +2,16 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(714, 524)
+        MainWindow.resize(885, 618)
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -133,6 +132,26 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addItem(spacerItem1, 1, 0, 1, 1)
         self.horizontalLayout_3.addLayout(self.gridLayout_3)
         self.tabWidget.addTab(self.defaults_tab, "")
+        self.neuron_firmware = QtWidgets.QWidget()
+        self.neuron_firmware.setObjectName("neuron_firmware")
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.neuron_firmware)
+        self.verticalLayout_5.setContentsMargins(11, 11, 11, 11)
+        self.verticalLayout_5.setSpacing(6)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setSpacing(6)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.label_5 = QtWidgets.QLabel(self.neuron_firmware)
+        self.label_5.setObjectName("label_5")
+        self.verticalLayout_4.addWidget(self.label_5)
+        self.update_firmware = QtWidgets.QPushButton(self.neuron_firmware)
+        self.update_firmware.setEnabled(False)
+        self.update_firmware.setObjectName("update_firmware")
+        self.verticalLayout_4.addWidget(self.update_firmware)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem2)
+        self.verticalLayout_5.addLayout(self.verticalLayout_4)
+        self.tabWidget.addTab(self.neuron_firmware, "")
         self.side_firmware = QtWidgets.QWidget()
         self.side_firmware.setObjectName("side_firmware")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.side_firmware)
@@ -154,8 +173,8 @@ class Ui_MainWindow(object):
         self.flash_left = QtWidgets.QPushButton(self.side_firmware)
         self.flash_left.setObjectName("flash_left")
         self.gridLayout_5.addWidget(self.flash_left, 3, 0, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem2, 2, 0, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem3, 2, 0, 1, 1)
         self.horizontalLayout_4.addLayout(self.gridLayout_5)
         self.tabWidget.addTab(self.side_firmware, "")
         self.focus = QtWidgets.QWidget()
@@ -170,8 +189,8 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.focus)
         self.label.setObjectName("label")
         self.gridLayout_6.addWidget(self.label, 0, 0, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem3, 2, 0, 1, 1)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem4, 2, 0, 1, 1)
         self.focus_cmd = QtWidgets.QLineEdit(self.focus)
         self.focus_cmd.setObjectName("focus_cmd")
         self.gridLayout_6.addWidget(self.focus_cmd, 1, 0, 1, 1)
@@ -232,7 +251,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 714, 22))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 885, 27))
         self.menuBar.setObjectName("menuBar")
         self.menuDygma_Raise_Assembly_Tests = QtWidgets.QMenu(self.menuBar)
         self.menuDygma_Raise_Assembly_Tests.setObjectName("menuDygma_Raise_Assembly_Tests")
@@ -249,7 +268,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -270,6 +289,9 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.magnet), _translate("MainWindow", "Magnet Calibrate"))
         self.load_defaults.setText(_translate("MainWindow", "Load Defaults (will wipe all settings)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.defaults_tab), _translate("MainWindow", "Load Defaults"))
+        self.label_5.setText(_translate("MainWindow", "Unplug the Neuron from the computer. Then while holding the escape key, plug it back in."))
+        self.update_firmware.setText(_translate("MainWindow", "Update Firmware"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.neuron_firmware), _translate("MainWindow", "Neuron Firmware"))
         self.verify_left.setText(_translate("MainWindow", "Verify Left"))
         self.verify_right.setText(_translate("MainWindow", "Verify Right"))
         self.flash_right.setText(_translate("MainWindow", "Flash Right"))
@@ -287,6 +309,5 @@ class Ui_MainWindow(object):
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Logs"))
         self.actionCopy_log.setText(_translate("MainWindow", "Copy log"))
         self.actionClear_log.setText(_translate("MainWindow", "Clear log"))
-
 
 import image_rc
