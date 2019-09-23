@@ -39,11 +39,17 @@ class SerialPlug():
 
     def check_serial_status(self):
         if self.connected:
-            # try a write if connected to FW
+            # try a write if connected to FW - will disconnect if there is a problem
             if self.vidpid == RAISE_FW_VIDPID:
                 logging.debug("trying a write to check serial")
                 self.run_cmd("", quiet=True)
-            # nothing if bootloader
+            # bootloader port isn't really connected, so just check it still exists
+            else:
+                # have to do this stuff because ports is a generator, can't just call len on it
+                if len(list(serial.tools.list_ports.grep(self.vidpid))) == 0:
+                    logging.debug("bootloader port has gone away")
+                    self.connected = False
+                    
         else:
             # otherwise try to setup
             logging.debug("calling setup as not connected")

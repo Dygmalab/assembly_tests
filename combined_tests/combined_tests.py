@@ -130,7 +130,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         fileName, _ = QFileDialog.getOpenFileName(self,"Choose firmware file", "","Firmware Files (*.bin)", options=options)
         if fileName:
             self.firmware_file = fileName
-            self.firmware_filename.setText(os.path.basename(fileName))
+            self.firmware_filename.setText("Firmware file: %s" % os.path.basename(fileName))
    
     def bossa_update_firmware(self):
         logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
