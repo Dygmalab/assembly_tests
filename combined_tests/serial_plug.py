@@ -22,6 +22,9 @@ class SerialPlug():
             self.connected = False
         self.vidpid = RAISE_FW_VIDPID
 
+    def get_port(self):
+        return self.port
+
     def is_connected(self):
         return self.connected
 

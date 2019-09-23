@@ -1,4 +1,6 @@
 import logging
+import subprocess
+import platform
 import argparse
 import mainwindow
 import sys
@@ -95,6 +97,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware())
+        self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
+        self.firmware_file = None
 
         # status bar timer that also does serial connection
         self.status_timer = QTimer(self)
@@ -113,9 +117,30 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def clear_log(self):
         logging.debug("clear log")
         self.log_messages.clear()
+
+    def choose_firmware_dialog(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getOpenFileName(self,"Choose firmware file", "","Firmware Files (*.bin)", options=options)
+        if fileName:
+            self.firmware_file = fileName
+            self.firmware_filename.setText(os.path.basename(fileName))
    
     def bossa_update_firmware(self):
-        logging.info("starting BOSSA firmware update")
+        logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
+        if platform.system() == 'Linux':
+            bossac = os.path.join(self.wd, 'binaries', 'bossac')
+        elif platform.system() == 'Windows':
+            bossac = os.path.join(self.wd, 'binaries', 'bossac.exe')
+        else:
+            logging.warning("unsupported platform %s" % platform.system())
+            return
+
+        # command = "%s -i -d --port %s -e -o 0x2000 -w %s -R" % (bossac, self.ser.get_port(), self.firmware_file)
+        command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-o', '0x2000', '-w', self.firmware_file, '-R']
+        logging.info(" ".join(command_list))
+        result = subprocess.run(command_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        logging.info(result.stdout.decode('utf-8'))
 
     def defaults(self):
         settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
@@ -202,6 +227,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.statusBar.showMessage(self.ser.get_status_message())
 
         # disable the tabs if no serial
+        """
         if not self.ser.is_connected():
             current_index = self.tabWidget.currentIndex()
             for index, tab_config in enumerate(TAB_DEFS):
@@ -215,6 +241,13 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
             # get the keyboard ready for the test
             self.tabChange(self.tabWidget.currentIndex())
+        """
+
+        if TAB_DEFS[self.tabWidget.currentIndex()]["name"] == "neuronfw":
+            if self.ser.is_connected() and self.firmware_file is not None:
+                self.update_firmware.setEnabled(True) 
+            else:
+                self.update_firmware.setEnabled(False) 
 
         self.last_serial_check = self.ser.is_connected()
 

@@ -242,6 +242,27 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="choose_firmware">
+              <property name="text">
+               <string>Choose firmware</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="firmware_cancel">
+              <property name="text">
+               <string>Cancel</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="firmware_filename">
+              <property name="text">
+               <string>Firmware file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="update_firmware">
               <property name="enabled">
                <bool>false</bool>
