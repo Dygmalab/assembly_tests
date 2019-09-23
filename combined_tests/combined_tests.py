@@ -98,6 +98,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware())
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
+        self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware())
         self.firmware_file = None
 
         # status bar timer that also does serial connection
@@ -117,6 +118,11 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def clear_log(self):
         logging.debug("clear log")
         self.log_messages.clear()
+
+    def cancel_firmware(self):
+        # just select 1st tab
+        self.tabWidget.setCurrentIndex(0)
+        self.tabChange(self.tabWidget.currentIndex())
 
     def choose_firmware_dialog(self):
         options = QFileDialog.Options()
@@ -171,6 +177,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.last_led = self.current_led
 
     def tabChange(self, index):
+        self.clear_log()
         logging.debug("tab change to %s" % TAB_DEFS[index]["name"])
         if TAB_DEFS[index]["name"] == "light":
             self.ser.run_cmd("led.mode 8") # palette effect
@@ -227,12 +234,14 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.ser.check_serial_status()
         self.statusBar.showMessage(self.ser.get_status_message())
 
-        # disable the tabs if no serial
-        """
+        # disable the tabs if no serial - except the neuron firmware one
         if not self.ser.is_connected():
+            # have to record which tab was selected
             current_index = self.tabWidget.currentIndex()
             for index, tab_config in enumerate(TAB_DEFS):
-                self.tabWidget.setTabEnabled(index, False)
+                if not TAB_DEFS[index]["name"] == "neuronfw":
+                    self.tabWidget.setTabEnabled(index, False)
+            # so it can be reinstated
             self.tabWidget.setCurrentIndex(current_index)
 
         # if has just come back on line
@@ -242,7 +251,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
             # get the keyboard ready for the test
             self.tabChange(self.tabWidget.currentIndex())
-        """
 
         if TAB_DEFS[self.tabWidget.currentIndex()]["name"] == "neuronfw":
             if self.ser.is_connected() and self.firmware_file is not None:
@@ -272,25 +280,30 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Dygma Raise test jig controller")
-    parser.add_argument('--verbose', '-v', action='count', default=1)
-    parser.add_argument('--chinese', action='store_const', const=True) # doesn't do anything yet
-    parser.add_argument('--defaults', action='store_const', const=True)
+    parser.add_argument('--verbose', '-v', help="use multiple times for more verbosity", action='count', default=1)
     args = parser.parse_args()
-
-    args.verbose = 70 - (10*args.verbose) if args.verbose > 0 else 0
-    logging.basicConfig(level=args.verbose, format='%(asctime)s %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-    # get logging started
-    log = logging.getLogger('')
-    log.setLevel(logging.DEBUG)
-
-    # create console handler and set level to info
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    log.addHandler(ch)
 
     app = QApplication(sys.argv)
     form = CombinedTests()
+
+    """ 
+    CRITICAL 50
+    ERROR 40
+    WARNING 30
+    INFO 20
+    DEBUG 10
+    NOTSET 0
+    """
+    args.verbose = 40 - (10*args.verbose) if args.verbose > 0 else 0
+
+    log = logging.getLogger('')
+    log.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler()
+    formatter = logging.Formatter('%(levelname)10s - %(message)s')
+    ch.setFormatter(formatter)
+    ch.setLevel(args.verbose)
+    log.addHandler(ch)
 
     qtlog = QTLogHandler(form)
     qtlog.setLevel(logging.INFO)
@@ -299,9 +312,6 @@ if __name__ == '__main__':
     form.setup()
 
     # allow override gui with specific arguments
-    if args.defaults:
-        form.defaults()
-    else:
-        ret = app.exec_()
-        logging.info("finished")
-        sys.exit(ret)
+    ret = app.exec_()
+    logging.info("finished")
+    sys.exit(ret)

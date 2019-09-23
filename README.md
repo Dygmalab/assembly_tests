@@ -8,4 +8,8 @@
 
 ## Todo
 
+add flasher support for windows
 
+## Resources
+
+* bossac windows binary from https://github.com/shumatech/BOSSA/releases/download/1.7.0/bossac-1.7.0-mingw32.tar.gz

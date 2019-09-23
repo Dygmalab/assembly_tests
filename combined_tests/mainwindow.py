@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(885, 618)
+        MainWindow.resize(997, 655)
         self.centralWidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -260,7 +260,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 885, 27))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 997, 27))
         self.menuBar.setObjectName("menuBar")
         self.menuDygma_Raise_Assembly_Tests = QtWidgets.QMenu(self.menuBar)
         self.menuDygma_Raise_Assembly_Tests.setObjectName("menuDygma_Raise_Assembly_Tests")
