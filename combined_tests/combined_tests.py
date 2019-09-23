@@ -130,14 +130,15 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
         if platform.system() == 'Linux':
             bossac = os.path.join(self.wd, 'binaries', 'bossac')
+            command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-o', '0x2000', '-w', self.firmware_file, '-R']
         elif platform.system() == 'Windows':
             bossac = os.path.join(self.wd, 'binaries', 'bossac.exe')
+            # arduino compliled version of bossac already writes to offset 0x2000
+            command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-w', self.firmware_file, '-R']
         else:
             logging.warning("unsupported platform %s" % platform.system())
             return
 
-        # command = "%s -i -d --port %s -e -o 0x2000 -w %s -R" % (bossac, self.ser.get_port(), self.firmware_file)
-        command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-o', '0x2000', '-w', self.firmware_file, '-R']
         logging.info(" ".join(command_list))
         result = subprocess.run(command_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         logging.info(result.stdout.decode('utf-8'))
