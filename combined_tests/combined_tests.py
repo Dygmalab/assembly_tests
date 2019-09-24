@@ -299,7 +299,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Dygma Raise test jig controller")
     parser.add_argument('--verbose', '-v', help="use multiple times for more verbosity", action='count', default=1)
-    parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="master", choices=['master','chinese','dvt'])
+    parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="chinese", choices=['master','chinese','dvt'])
     args = parser.parse_args()
 
     app = QApplication(sys.argv)
