@@ -11,24 +11,27 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
+SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
+            "idleLeds.idleTimeLimit", "led.mode"]
+
 TAB_DEFS = { 
     "light_tab":          { "conn": "fw", "avail": ['master','chinese'] },
     "led_tab":            {"conn": "fw", "avail": ['master'] },
     "magnet_tab":         {"conn": "fw", "avail": ['master','chinese'] },
-    "load_defaults_tab":  {"conn": "fw", "avail": ['master','chinese'] },
+    "load_defaults_tab":  {"conn": "fw", "avail": ['master','dvt','chinese'] },
     "neuron_firmware_tab":{"conn": "bl", "avail": ['master','dvt','chinese'] },
     "side_firmware_tab":  {"conn": "fw", "avail": ['master','dvt'] },
     "focus_tab":          {"conn": "fw", "avail": ['master'] },
     "info_tab":           {"conn": "fw", "avail": ['master','dvt','chinese'] },
     }
 
-left_keys        = 33 # 32 for ANSI
-right_keys       = 36
-left_led   = 30
-right_led  = 32
-led_start  = left_keys + right_keys
-huble_leds       = 1
-led_count = left_keys + right_keys + left_led + right_led + huble_leds # 130 + 1 for the huble
+left_keys       = 33 # 32 for ANSI
+right_keys      = 36
+left_led        = 30
+right_led       = 32
+led_start       = left_keys + right_keys
+huble_leds      = 1
+led_count       = left_keys + right_keys + left_led + right_led + huble_leds # 130 + 1 for the huble
 
 class QTLogHandler(logging.StreamHandler):
 
@@ -65,8 +68,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.light_off.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 0 0"))
 
         # magnet buttons
-        self.magnet_split.clicked.connect(self.get_split)
-        self.magnet_joined.clicked.connect(self.get_joined)
+        self.magnet_split.clicked.connect(self.get_split_clicked)
+        self.magnet_joined.clicked.connect(self.get_joined_clicked)
 
         # individual led buttons and setup
         self.current_led = 0
@@ -76,7 +79,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.led_prev.clicked.connect(lambda: self.next_led(-1))
 
         # load defaults
-        self.load_defaults.clicked.connect(lambda: self.defaults())
+        self.load_defaults.clicked.connect(lambda: self.default_settings_clicked())
+        self.backup_settings.clicked.connect(lambda: self.backup_settings_clicked())
+        self.restore_settings.clicked.connect(lambda: self.restore_settings_clicked())
 
         # side fw updater
         self.verify_left.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_left_side"))
@@ -88,7 +93,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.focus_cmd.returnPressed.connect(lambda: self.run_focus_cmd())
 
         # tab connections
-        self.tabWidget.tabBarClicked.connect(self.tabChange) # tabBarClicked only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
+        self.tabWidget.tabBarClicked.connect(self.tab_changed) # tabBarClicked only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
         self.tabWidget.setCurrentIndex(0)
 
         # log copy menu
@@ -96,9 +101,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.actionClear_log.triggered.connect(lambda: self.clear_log())
 
         # neuron fw
-        self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware())
+        self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
-        self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware())
+        self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware_clicked())
         self.firmware_file = None
 
         # remove tabs not available from command options
@@ -112,11 +117,26 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # status bar timer that also does serial connection
         self.status_timer = QTimer(self)
         self.last_serial_check = None
-        self.status_timer.timeout.connect(self.checkSerialStatus)
+        self.status_timer.timeout.connect(self.check_serial_status)
         self.status_timer.start(1000)
-        self.checkSerialStatus()
+        self.check_serial_status()
 
         self.show()
+
+    # serial command utilities
+    ################################################################################
+
+    @pyqtSlot()
+    def run_serial_cmd(self, command):
+        return self.ser.run_cmd(command)
+
+    @pyqtSlot()
+    def run_focus_cmd(self):
+        self.run_serial_cmd(self.focus_cmd.text())
+        self.focus_cmd.clear()
+
+    # log utilities
+    ################################################################################
 
     def copy_log(self):
         logging.debug("copy log")
@@ -127,12 +147,18 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         logging.debug("clear log")
         self.log_messages.clear()
 
-    def cancel_firmware(self):
+    def add_log(self, msg):
+        self.log_messages.appendPlainText(msg)
+
+    # firmware
+    ################################################################################
+
+    def cancel_firmware_clicked(self):
         # select another info tab - in all GUI versions
         tab = self.findChild(QWidget, "info_tab")
         index = self.tabWidget.indexOf(tab)
         self.tabWidget.setCurrentIndex(index)
-        self.tabChange(self.tabWidget.currentIndex())
+        self.tab_changed(self.tabWidget.currentIndex())
 
     def choose_firmware_dialog(self):
         options = QFileDialog.Options()
@@ -142,7 +168,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.firmware_file = fileName
             self.firmware_filename.setText("Firmware file: %s" % os.path.basename(fileName))
    
-    def bossa_update_firmware(self):
+    def bossa_update_firmware_clicked(self):
         logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
         if platform.system() == 'Linux':
             bossac = os.path.join(self.wd, 'binaries', 'bossac')
@@ -159,16 +185,47 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         result = subprocess.run(command_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         logging.info(result.stdout.decode('utf-8'))
 
-    def defaults(self):
-        settings = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
-                    "idleLeds.idleTimeLimit", "led.mode"]
+    # defaults
+    ################################################################################
 
-        for conf in settings:
+    def default_settings_clicked(self):
+        for conf in SETTINGS:
             file_path = os.path.join(self.wd, 'defaults', "DVT" + conf)
             with open(file_path, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
                 self.ser.run_cmd("%s %s" % (conf, data))
+
+    def backup_settings_clicked(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.ShowDirsOnly
+        directory = QFileDialog.getExistingDirectory(self,"Select backup directory",  options=options)
+        for conf in SETTINGS:
+            file_path = os.path.join(directory, conf)
+            with open(file_path, 'w') as fh:
+                data = self.ser.run_cmd(conf)
+                fh.write(data + "\n")
+                logging.info("backed up to %s" % (file_path))
+
+    def restore_settings_clicked(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.ShowDirsOnly
+        directory = QFileDialog.getExistingDirectory(self,"Select restore directory",  options=options)
+        for conf in SETTINGS:
+            file_path = os.path.join(directory, conf)
+            try:
+                with open(file_path, 'r') as fh:
+                    data = fh.readline()
+                    data = data.strip()
+                    self.ser.run_cmd("%s %s" % (conf, data))
+                    logging.info("restoring from %s" % (file_path))
+            except IOError as e:
+                logging.warning("couldn't read backup file %s" % file_path)
+
+    # led tools
+    ################################################################################
 
     def next_led(self, increment):
         self.current_led += increment
@@ -186,7 +243,39 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.last_led = self.current_led
 
-    def tabChange(self, index):
+    # magnet
+    ################################################################################
+
+    # this gets called first
+    @pyqtSlot()
+    def get_joined_clicked(self):
+        joined = int(self.ser.run_cmd("hardware.joint"))
+        logging.info("joined = %d" % joined)
+        if joined > 0 and joined < 1000:
+            self.joined = joined
+            self.magnet_joined.setDisabled(True)
+            self.magnet_split.setEnabled(True)
+        else:
+            logging.warning("invalid joint value - is side plugged in?")
+
+    # and this after
+    @pyqtSlot()
+    def get_split_clicked(self):
+        self.split = int(self.ser.run_cmd("hardware.joint"))
+        logging.info("split = %d" % self.split)
+        self.magnet_split.setDisabled(True)
+        if(self.split > self.joined):
+            self.threshold = (self.split - self.joined) / 2 + self.joined;
+        else:
+            self.threshold = (self.joined - self.split) / 2 + self.split;
+        logging.info("new threshold = %d" % self.threshold)
+        self.ser.run_cmd("joint.threshold %d" % self.threshold)
+
+    # tab change stuff
+    ################################################################################
+
+    # called when a tab is clicked
+    def tab_changed(self, index):
         try:
             tab_name = self.tabWidget.widget(index).objectName()
         except AttributeError:
@@ -217,34 +306,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         elif TAB_DEFS[tab_name]["conn"] == 'bl':
             self.ser.find_bootloader()
 
-    # magnet stuff
-    # this gets called first
-    @pyqtSlot()
-    def get_joined(self):
-        joined = int(self.ser.run_cmd("hardware.joint"))
-        logging.info("joined = %d" % joined)
-        if joined > 0 and joined < 1000:
-            self.joined = joined
-            self.magnet_joined.setDisabled(True)
-            self.magnet_split.setEnabled(True)
-        else:
-            logging.warning("invalid joint value - is side plugged in?")
-
-    # and this after
-    @pyqtSlot()
-    def get_split(self):
-        self.split = int(self.ser.run_cmd("hardware.joint"))
-        logging.info("split = %d" % self.split)
-        self.magnet_split.setDisabled(True)
-        if(self.split > self.joined):
-            self.threshold = (self.split - self.joined) / 2 + self.joined;
-        else:
-            self.threshold = (self.joined - self.split) / 2 + self.split;
-        logging.info("new threshold = %d" % self.threshold)
-        self.ser.run_cmd("joint.threshold %d" % self.threshold)
-
     # called regularly by the timer
-    def checkSerialStatus(self):
+    def check_serial_status(self):
         self.ser.check_serial_status()
         self.statusBar.showMessage(self.ser.get_status_message())
 
@@ -265,7 +328,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
                 self.tabWidget.setTabEnabled(index, True)
 
             # get the keyboard ready for the test
-            self.tabChange(self.tabWidget.currentIndex())
+            self.tab_changed(self.tabWidget.currentIndex())
 
         tab_name = self.tabWidget.currentWidget().objectName()
 
@@ -281,18 +344,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
 
         self.last_serial_check = self.ser.is_connected()
-
-    @pyqtSlot()
-    def run_serial_cmd(self, command):
-        return self.ser.run_cmd(command)
-
-    @pyqtSlot()
-    def run_focus_cmd(self):
-        self.run_serial_cmd(self.focus_cmd.text())
-        self.focus_cmd.clear()
-
-    def add_log(self, msg):
-        self.log_messages.appendPlainText(msg)
 
 
 if __name__ == '__main__':
