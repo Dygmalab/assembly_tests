@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="light_tab">
          <attribute name="title">
@@ -135,7 +135,7 @@
         </widget>
         <widget class="QWidget" name="magnet_tab">
          <attribute name="title">
-          <string>Magnet Calibrate</string>
+          <string>Magnet</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
@@ -198,7 +198,7 @@
         </widget>
         <widget class="QWidget" name="load_defaults_tab">
          <attribute name="title">
-          <string>Load Defaults</string>
+          <string>Defaults</string>
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -222,6 +222,20 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="2" column="0">
+             <widget class="QPushButton" name="backup_settings">
+              <property name="text">
+               <string>Backup settings</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="restore_settings">
+              <property name="text">
+               <string>Restore settings</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
