@@ -11,16 +11,16 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
-TAB_DEFS = [ 
-    { "name": "light",          "conn": "fw" },
-    { "name": "led",            "conn": "fw" },
-    { "name": "magnet",         "conn": "fw" },
-    { "name": "load defaults",  "conn": "fw" },
-    { "name": "neuronfw",       "conn": "bl" },
-    { "name": "sidefw",         "conn": "fw" },
-    { "name": "focus",          "conn": "fw" },
-    { "name": "info",           "conn": "fw" },
-    ]
+TAB_DEFS = { 
+    "light_tab":          { "conn": "fw", "avail": ['master','chinese'] },
+    "led_tab":            {"conn": "fw", "avail": ['master'] },
+    "magnet_tab":         {"conn": "fw", "avail": ['master','chinese'] },
+    "load_defaults_tab":  {"conn": "fw", "avail": ['master','chinese'] },
+    "neuron_firmware_tab":{"conn": "bl", "avail": ['master','dvt','chinese'] },
+    "side_firmware_tab":  {"conn": "fw", "avail": ['master','dvt'] },
+    "focus_tab":          {"conn": "fw", "avail": ['master'] },
+    "info_tab":           {"conn": "fw", "avail": ['master','dvt','chinese'] },
+    }
 
 left_keys        = 33 # 32 for ANSI
 right_keys       = 36
@@ -88,7 +88,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.focus_cmd.returnPressed.connect(lambda: self.run_focus_cmd())
 
         # tab connections
-        self.tabWidget.tabBarClicked.connect(self.tabChange) # only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
+        self.tabWidget.tabBarClicked.connect(self.tabChange) # tabBarClicked only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
         self.tabWidget.setCurrentIndex(0)
 
         # log copy menu
@@ -100,6 +100,14 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
         self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware())
         self.firmware_file = None
+
+        # remove tabs not available from command options
+        for tab_name, tab_config in TAB_DEFS.items():
+            if not args.gui_version in tab_config['avail']:
+                tab = self.findChild(QWidget, tab_name)
+                index = self.tabWidget.indexOf(tab)
+                logging.debug("removing tab %d [%s]" % (index, tab_name))
+                self.tabWidget.removeTab(index)
 
         # status bar timer that also does serial connection
         self.status_timer = QTimer(self)
@@ -120,8 +128,10 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.log_messages.clear()
 
     def cancel_firmware(self):
-        # just select 1st tab
-        self.tabWidget.setCurrentIndex(0)
+        # select another info tab - in all GUI versions
+        tab = self.findChild(QWidget, "info_tab")
+        index = self.tabWidget.indexOf(tab)
+        self.tabWidget.setCurrentIndex(index)
         self.tabChange(self.tabWidget.currentIndex())
 
     def choose_firmware_dialog(self):
@@ -177,30 +187,34 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.last_led = self.current_led
 
     def tabChange(self, index):
+        try:
+            tab_name = self.tabWidget.widget(index).objectName()
+        except AttributeError:
+            # can happen if clicked on disabled tab
+            return
+        
         self.clear_log()
-        logging.debug("tab change to %s" % TAB_DEFS[index]["name"])
-        if TAB_DEFS[index]["name"] == "light":
+        logging.debug("tab change to %s" % tab_name)
+        if tab_name == "light_tab":
             self.ser.run_cmd("led.mode 8") # palette effect
             self.ser.run_cmd("led.setAll 0 0 0")
-        elif TAB_DEFS[index]["name"] == "magnet":
+        elif tab_name == "magnet_tab":
             self.ser.run_cmd("led.mode 6") # joint effect mode
             self.magnet_split.setDisabled(True)
             self.magnet_joined.setEnabled(True)
-        elif TAB_DEFS[index]["name"] == "led":
+        elif tab_name == "led_tab":
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
             self.next_led(0)
-        elif TAB_DEFS[index]["name"] == "info":
+        elif tab_name == "info_tab":
             self.version_label.setText(self.run_serial_cmd("hardware.firmware"))
             self.keyscan_label.setText(self.run_serial_cmd("hardware.keyscan"))
             self.layout_label.setText(self.run_serial_cmd("hardware.layout"))
-        elif TAB_DEFS[index]["name"] == "neuronfw":
-            pass
 
         # connection mode depends on the tab
-        if TAB_DEFS[index]["conn"] == 'fw':
+        if TAB_DEFS[tab_name]["conn"] == 'fw':
             self.ser.find_keyboard()
-        elif TAB_DEFS[index]["conn"] == 'bl':
+        elif TAB_DEFS[tab_name]["conn"] == 'bl':
             self.ser.find_bootloader()
 
     # magnet stuff
@@ -238,31 +252,35 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         if not self.ser.is_connected():
             # have to record which tab was selected
             current_index = self.tabWidget.currentIndex()
-            for index, tab_config in enumerate(TAB_DEFS):
-                if not TAB_DEFS[index]["name"] == "neuronfw":
+            for index in range(self.tabWidget.count()):
+                tab_name = self.tabWidget.widget(index).objectName()
+                if not tab_name == "neuron_firmware_tab":
                     self.tabWidget.setTabEnabled(index, False)
             # so it can be reinstated
             self.tabWidget.setCurrentIndex(current_index)
 
         # if has just come back on line
         if self.ser.is_connected() and not self.last_serial_check:
-            for index, tab_confige in enumerate(TAB_DEFS):
+            for index in range(self.tabWidget.count()):
                 self.tabWidget.setTabEnabled(index, True)
 
             # get the keyboard ready for the test
             self.tabChange(self.tabWidget.currentIndex())
 
-        if TAB_DEFS[self.tabWidget.currentIndex()]["name"] == "neuronfw":
+        tab_name = self.tabWidget.currentWidget().objectName()
+
+        # only allow firmware update button enabled if connected to bootloader
+        if tab_name == "neuron_firmware_tab":
             if self.ser.is_connected() and self.firmware_file is not None:
                 self.update_firmware.setEnabled(True) 
             else:
                 self.update_firmware.setEnabled(False) 
 
-        self.last_serial_check = self.ser.is_connected()
-
         # update the magnet level if on the magnet page
-        if TAB_DEFS[self.tabWidget.currentIndex()]["name"] == "magnet" and self.ser.is_connected():
+        if tab_name == "magnet_tab" and self.ser.is_connected():
             self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
+
+        self.last_serial_check = self.ser.is_connected()
 
     @pyqtSlot()
     def run_serial_cmd(self, command):
@@ -281,6 +299,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Dygma Raise test jig controller")
     parser.add_argument('--verbose', '-v', help="use multiple times for more verbosity", action='count', default=1)
+    parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="master", choices=['master','chinese','dvt'])
     args = parser.parse_args()
 
     app = QApplication(sys.argv)

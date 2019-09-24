@@ -51,9 +51,9 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>6</number>
         </property>
-        <widget class="QWidget" name="light">
+        <widget class="QWidget" name="light_tab">
          <attribute name="title">
           <string>All LEDs</string>
          </attribute>
@@ -99,7 +99,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="individualleds">
+        <widget class="QWidget" name="led_tab">
          <attribute name="title">
           <string>Single LEDs</string>
          </attribute>
@@ -133,7 +133,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="magnet">
+        <widget class="QWidget" name="magnet_tab">
          <attribute name="title">
           <string>Magnet Calibrate</string>
          </attribute>
@@ -196,7 +196,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="defaults_tab">
+        <widget class="QWidget" name="load_defaults_tab">
          <attribute name="title">
           <string>Load Defaults</string>
          </attribute>
@@ -227,7 +227,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="neuron_firmware">
+        <widget class="QWidget" name="neuron_firmware_tab">
          <attribute name="title">
           <string>Neuron Firmware</string>
          </attribute>
@@ -289,7 +289,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="side_firmware">
+        <widget class="QWidget" name="side_firmware_tab">
          <attribute name="title">
           <string>Side Firmware</string>
          </attribute>
@@ -341,7 +341,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="focus">
+        <widget class="QWidget" name="focus_tab">
          <attribute name="title">
           <string>Focus</string>
          </attribute>
