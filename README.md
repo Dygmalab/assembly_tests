@@ -2,9 +2,23 @@
 
 ## Combined tests
 
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/combined_tests)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/combined_tests.exe)
-* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dist/combined_tests.dmg)
+### Full GUI
+
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests.dmg)
+
+### GUI for assembly line
+
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests.dmg)
+
+### GUI for DVT testers
+
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests.dmg)
 
 ## Todo
 
