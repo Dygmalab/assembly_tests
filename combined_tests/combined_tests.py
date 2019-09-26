@@ -11,6 +11,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
+MAGNET_THRESHOLD = 45
+
 SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
             "idleLeds.idleTimeLimit", "led.mode"]
 
@@ -70,6 +72,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # magnet buttons
         self.magnet_split.clicked.connect(self.get_split_clicked)
         self.magnet_joined.clicked.connect(self.get_joined_clicked)
+        self.magnet_restart.clicked.connect(self.magnet_restart_clicked)
 
         # individual led buttons and setup
         self.current_led = 0
@@ -257,6 +260,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.magnet_split.setEnabled(True)
         else:
             logging.warning("invalid joint value - is side plugged in?")
+            self.magnet_fail.setStyleSheet("background-color: red")
 
     # and this after
     @pyqtSlot()
@@ -264,12 +268,23 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.split = int(self.ser.run_cmd("hardware.joint"))
         logging.info("split = %d" % self.split)
         self.magnet_split.setDisabled(True)
-        if(self.split > self.joined):
-            self.threshold = (self.split - self.joined) / 2 + self.joined;
-        else:
-            self.threshold = (self.joined - self.split) / 2 + self.split;
+        # joined is more than split
+        self.threshold = (self.joined - self.split) / 2 + self.split;
         logging.info("new threshold = %d" % self.threshold)
         self.ser.run_cmd("joint.threshold %d" % self.threshold)
+
+        if (self.joined - self.split) > MAGNET_THRESHOLD:
+            self.magnet_pass.setStyleSheet("background-color: green")
+        else:
+            self.magnet_fail.setStyleSheet("background-color: red")
+            logging.warning("magnet difference was %d, needs to be > %d" % (self.joined - self.split, MAGNET_THRESHOLD))
+
+    @pyqtSlot()
+    def magnet_restart_clicked(self):
+        self.magnet_pass.setStyleSheet("background-color: grey")
+        self.magnet_fail.setStyleSheet("background-color: grey")
+        self.magnet_split.setDisabled(True)
+        self.magnet_joined.setEnabled(True)
 
     # tab change stuff
     ################################################################################
@@ -289,8 +304,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.setAll 0 0 0")
         elif tab_name == "magnet_tab":
             self.ser.run_cmd("led.mode 6") # joint effect mode
-            self.magnet_split.setDisabled(True)
-            self.magnet_joined.setEnabled(True)
+            self.magnet_restart_clicked()
         elif tab_name == "led_tab":
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
