@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
 MAGNET_THRESHOLD = 45
+DEFAULT_SETTINGS = "MP" # in the defaults dir there are a few options for the defaults
 
 SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
             "idleLeds.idleTimeLimit", "led.mode"]
@@ -193,7 +194,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
     def default_settings_clicked(self):
         for conf in SETTINGS:
-            file_path = os.path.join(self.wd, 'defaults', "DVT" + conf)
+            file_path = os.path.join(self.wd, 'defaults', DEFAULT_SETTINGS + conf)
             with open(file_path, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
