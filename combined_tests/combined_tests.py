@@ -182,6 +182,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             # arduino compliled version of bossac already writes to offset 0x2000
             command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-w', self.firmware_file, '-R']
         else:
+            # don't have anything for Mac
             logging.warning("unsupported platform %s" % platform.system())
             return
 
