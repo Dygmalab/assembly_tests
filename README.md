@@ -22,7 +22,7 @@
 
 ## Todo
 
-add flasher support for windows
+- add flasher support for mac
 
 ## Resources
 
