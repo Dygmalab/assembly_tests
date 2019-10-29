@@ -11,6 +11,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
 
+MAGNET_THRESHOLD = 45
+DEFAULT_SETTINGS = "MP" # in the defaults dir there are a few options for the defaults
+
 SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
             "idleLeds.idleTimeLimit", "led.mode"]
 
@@ -70,6 +73,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # magnet buttons
         self.magnet_split.clicked.connect(self.get_split_clicked)
         self.magnet_joined.clicked.connect(self.get_joined_clicked)
+        self.magnet_restart.clicked.connect(self.magnet_restart_clicked)
 
         # individual led buttons and setup
         self.current_led = 0
@@ -103,7 +107,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
-        self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware_clicked())
+        self.firmware_cancel.clicked.connect(lambda: self.select_info_tab())
         self.firmware_file = None
 
         # remove tabs not available from command options
@@ -120,6 +124,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.status_timer.timeout.connect(self.check_serial_status)
         self.status_timer.start(1000)
         self.check_serial_status()
+
+        # start off with info tab
+        self.select_info_tab()
 
         self.show()
 
@@ -153,7 +160,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     # firmware
     ################################################################################
 
-    def cancel_firmware_clicked(self):
+    def select_info_tab(self):
         # select another info tab - in all GUI versions
         tab = self.findChild(QWidget, "info_tab")
         index = self.tabWidget.indexOf(tab)
@@ -178,6 +185,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             # arduino compliled version of bossac already writes to offset 0x2000
             command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-w', self.firmware_file, '-R']
         else:
+            # don't have anything for Mac
             logging.warning("unsupported platform %s" % platform.system())
             return
 
@@ -190,7 +198,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
     def default_settings_clicked(self):
         for conf in SETTINGS:
-            file_path = os.path.join(self.wd, 'defaults', "DVT" + conf)
+            file_path = os.path.join(self.wd, 'defaults', DEFAULT_SETTINGS + conf)
             with open(file_path, 'r') as fh:
                 data = fh.readline()
                 data = data.strip()
@@ -200,7 +208,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self,"Select backup directory",  options=options)
+        directory = QFileDialog.getExistingDirectory(self, "Select backup directory", options=options)
         for conf in SETTINGS:
             file_path = os.path.join(directory, conf)
             with open(file_path, 'w') as fh:
@@ -212,7 +220,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self,"Select restore directory",  options=options)
+        directory = QFileDialog.getExistingDirectory(self, "Select restore directory", options=options)
         for conf in SETTINGS:
             file_path = os.path.join(directory, conf)
             try:
@@ -257,6 +265,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.magnet_split.setEnabled(True)
         else:
             logging.warning("invalid joint value - is side plugged in?")
+            self.magnet_fail.setStyleSheet("background-color: red")
 
     # and this after
     @pyqtSlot()
@@ -264,12 +273,23 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.split = int(self.ser.run_cmd("hardware.joint"))
         logging.info("split = %d" % self.split)
         self.magnet_split.setDisabled(True)
-        if(self.split > self.joined):
-            self.threshold = (self.split - self.joined) / 2 + self.joined;
-        else:
-            self.threshold = (self.joined - self.split) / 2 + self.split;
+        # joined is more than split
+        self.threshold = (self.joined - self.split) / 2 + self.split;
         logging.info("new threshold = %d" % self.threshold)
         self.ser.run_cmd("joint.threshold %d" % self.threshold)
+
+        if (self.joined - self.split) > MAGNET_THRESHOLD:
+            self.magnet_pass.setStyleSheet("background-color: green")
+        else:
+            self.magnet_fail.setStyleSheet("background-color: red")
+            logging.warning("magnet difference was %d, needs to be > %d" % (self.joined - self.split, MAGNET_THRESHOLD))
+
+    @pyqtSlot()
+    def magnet_restart_clicked(self):
+        self.magnet_pass.setStyleSheet("background-color: grey")
+        self.magnet_fail.setStyleSheet("background-color: grey")
+        self.magnet_split.setDisabled(True)
+        self.magnet_joined.setEnabled(True)
 
     # tab change stuff
     ################################################################################
@@ -289,8 +309,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.setAll 0 0 0")
         elif tab_name == "magnet_tab":
             self.ser.run_cmd("led.mode 6") # joint effect mode
-            self.magnet_split.setDisabled(True)
-            self.magnet_joined.setEnabled(True)
+            self.magnet_restart_clicked()
         elif tab_name == "led_tab":
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
@@ -353,7 +372,12 @@ if __name__ == '__main__':
     parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="dvt", choices=['master','chinese','dvt'])
     args = parser.parse_args()
 
+    translator = QTranslator()
+    if args.gui_version == 'chinese':
+        translator.load("languages/china.qm")
+
     app = QApplication(sys.argv)
+    app.installTranslator(translator)
     form = CombinedTests()
 
     """ 

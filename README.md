@@ -4,21 +4,21 @@
 
 ### Full GUI
 
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests.exe)
-* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests.dmg)
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests_master.appimage)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests_master.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/master/dist/combined_tests_master.dmg)
 
 ### GUI for assembly line
 
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests.exe)
-* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests.dmg)
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests_chinese.appimage)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests_chinese.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/chinese/dist/combined_tests_chinese.dmg)
 
 ### GUI for DVT testers
 
-* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests)
-* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests.exe)
-* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests.dmg)
+* [Linux](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests_dvt.appimage)
+* [Windows](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests_dvt.exe)
+* [MacOSX](https://dygma-chrysalis.s3.eu-west-3.amazonaws.com/assembly_tests/dvt/dist/combined_tests_dvt.dmg)
 
 ## Todo
 
