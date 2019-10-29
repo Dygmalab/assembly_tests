@@ -107,7 +107,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
-        self.firmware_cancel.clicked.connect(lambda: self.cancel_firmware_clicked())
+        self.firmware_cancel.clicked.connect(lambda: self.select_info_tab())
         self.firmware_file = None
 
         # remove tabs not available from command options
@@ -124,6 +124,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.status_timer.timeout.connect(self.check_serial_status)
         self.status_timer.start(1000)
         self.check_serial_status()
+
+        # start off with info tab
+        self.select_info_tab()
 
         self.show()
 
@@ -157,7 +160,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     # firmware
     ################################################################################
 
-    def cancel_firmware_clicked(self):
+    def select_info_tab(self):
         # select another info tab - in all GUI versions
         tab = self.findChild(QWidget, "info_tab")
         index = self.tabWidget.indexOf(tab)
