@@ -103,7 +103,12 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
         self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
         self.firmware_cancel.clicked.connect(lambda: self.select_info_tab())
-        self.firmware_file = None
+        try:
+            self.firmware_file = os.path.join(self.wd, 'binaries', '2019-10-29-Raise-firmware.bin')
+            self.firmware_filename.setText(self.tr("Firmware file:") + os.path.basename(self.firmware_file))
+        except IOError as e:
+            logging.warning("couldn't find a default firmware")
+            self.firmware_file = None
 
         # remove tabs not available from command options
         for tab_name, tab_config in TAB_DEFS.items():
@@ -168,7 +173,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         fileName, _ = QFileDialog.getOpenFileName(self,"Choose firmware file", "","Firmware Files (*.bin)", options=options)
         if fileName:
             self.firmware_file = fileName
-            self.firmware_filename.setText("Firmware file: %s" % os.path.basename(fileName))
+            self.firmware_filename.setText(self.tr("Firmware file:") + os.path.basename(self.firmware_file))
    
     def bossa_update_firmware_clicked(self):
         logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
