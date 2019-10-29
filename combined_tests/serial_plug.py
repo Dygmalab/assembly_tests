@@ -97,6 +97,8 @@ class SerialPlug():
         except serial.serialutil.SerialException:
             logging.warning("write timeout")
             self.connected = False
+        except AttributeError as e:
+            logging.debug("run_cmd called with no serial connection")
 
         return output
 
