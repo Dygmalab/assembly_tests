@@ -182,6 +182,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             # arduino compliled version of bossac already writes to offset 0x2000
             command_list = [bossac, '-i', '-d', '--port', self.ser.get_port(), '-e', '-w', self.firmware_file, '-R']
         else:
+            # don't have anything for Mac
             logging.warning("unsupported platform %s" % platform.system())
             return
 
@@ -204,7 +205,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self,"Select backup directory",  options=options)
+        directory = QFileDialog.getExistingDirectory(self, "Select backup directory", options=options)
         for conf in SETTINGS:
             file_path = os.path.join(directory, conf)
             with open(file_path, 'w') as fh:
@@ -216,7 +217,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self,"Select restore directory",  options=options)
+        directory = QFileDialog.getExistingDirectory(self, "Select restore directory", options=options)
         for conf in SETTINGS:
             file_path = os.path.join(directory, conf)
             try:
@@ -368,7 +369,12 @@ if __name__ == '__main__':
     parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="chinese", choices=['master','chinese','dvt'])
     args = parser.parse_args()
 
+    translator = QTranslator()
+    if args.gui_version == 'chinese':
+        translator.load("languages/china.qm")
+
     app = QApplication(sys.argv)
+    app.installTranslator(translator)
     form = CombinedTests()
 
     """ 
