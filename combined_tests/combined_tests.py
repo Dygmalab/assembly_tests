@@ -48,7 +48,7 @@ class QTLogHandler(logging.StreamHandler):
 
 class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
-    def __init__(self):
+    def __init__(self, wd):
         super(self.__class__, self).__init__()
 
     def setup(self):
@@ -56,12 +56,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.clipboard = QApplication.clipboard()
 
         self.ser = SerialPlug()
-
-        # working directory
-        try:
-           self.wd = sys._MEIPASS # if running inside pyinstaller
-        except AttributeError:
-           self.wd = os.getcwd()
+        self.wd = wd
 
         # led tab buttons
         self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))
@@ -372,13 +367,21 @@ if __name__ == '__main__':
     parser.add_argument('--gui-version', help="switch between master, Chinese and DVT", action='store', default="dvt", choices=['master','chinese','dvt'])
     args = parser.parse_args()
 
+    # working directory
+    try:
+       wd = sys._MEIPASS # if running inside pyinstaller
+    except AttributeError:
+       wd = os.getcwd()
+
+
     translator = QTranslator()
     if args.gui_version == 'chinese':
-        translator.load("languages/china.qm")
+        file_path = os.path.join(wd, 'languages', 'china.qm')
+        translator.load(file_path)
 
     app = QApplication(sys.argv)
     app.installTranslator(translator)
-    form = CombinedTests()
+    form = CombinedTests(wd)
 
     """ 
     CRITICAL 50
