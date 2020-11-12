@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -52,12 +54,12 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.neuron_firmware_tab)
         self.label_5.setObjectName("label_5")
         self.verticalLayout_4.addWidget(self.label_5)
-        self.choose_firmware = QtWidgets.QPushButton(self.neuron_firmware_tab)
-        self.choose_firmware.setObjectName("choose_firmware")
-        self.verticalLayout_4.addWidget(self.choose_firmware)
         self.firmware_filename = QtWidgets.QLabel(self.neuron_firmware_tab)
         self.firmware_filename.setObjectName("firmware_filename")
         self.verticalLayout_4.addWidget(self.firmware_filename)
+        self.label_firmware_file = QtWidgets.QLabel(self.neuron_firmware_tab)
+        self.label_firmware_file.setObjectName("label_firmware_file")
+        self.verticalLayout_4.addWidget(self.label_firmware_file)
         self.update_firmware = QtWidgets.QPushButton(self.neuron_firmware_tab)
         self.update_firmware.setEnabled(False)
         self.update_firmware.setObjectName("update_firmware")
@@ -213,17 +215,17 @@ class Ui_MainWindow(object):
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setSpacing(6)
         self.gridLayout_3.setObjectName("gridLayout_3")
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem4, 3, 0, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.load_defaults_tab)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout_3.addWidget(self.label_6, 0, 0, 1, 1)
         self.load_defaults = QtWidgets.QPushButton(self.load_defaults_tab)
         self.load_defaults.setObjectName("load_defaults")
-        self.gridLayout_3.addWidget(self.load_defaults, 0, 0, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem4, 1, 0, 1, 1)
-        self.backup_settings = QtWidgets.QPushButton(self.load_defaults_tab)
-        self.backup_settings.setObjectName("backup_settings")
-        self.gridLayout_3.addWidget(self.backup_settings, 2, 0, 1, 1)
-        self.restore_settings = QtWidgets.QPushButton(self.load_defaults_tab)
-        self.restore_settings.setObjectName("restore_settings")
-        self.gridLayout_3.addWidget(self.restore_settings, 3, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.load_defaults, 2, 0, 1, 1)
+        self.label_defaults_file = QtWidgets.QLabel(self.load_defaults_tab)
+        self.label_defaults_file.setObjectName("label_defaults_file")
+        self.gridLayout_3.addWidget(self.label_defaults_file, 1, 0, 1, 1)
         self.horizontalLayout_3.addLayout(self.gridLayout_3)
         self.tabWidget.addTab(self.load_defaults_tab, "")
         self.info_tab = QtWidgets.QWidget()
@@ -281,7 +283,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 997, 27))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 997, 26))
         self.menuBar.setObjectName("menuBar")
         self.menuDygma_Raise_Assembly_Tests = QtWidgets.QMenu(self.menuBar)
         self.menuDygma_Raise_Assembly_Tests.setObjectName("menuDygma_Raise_Assembly_Tests")
@@ -298,15 +300,15 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(7)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Dygma Raise Assembly Tests"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Dygma Quality Test Software"))
         self.label_5.setText(_translate("MainWindow", "Unplug the Neuron from the computer. Then while holding the escape key, plug it back in."))
-        self.choose_firmware.setText(_translate("MainWindow", "Choose firmware"))
-        self.firmware_filename.setText(_translate("MainWindow", "Firmware file: none chosen"))
+        self.firmware_filename.setText(_translate("MainWindow", "Firmware file:"))
+        self.label_firmware_file.setText(_translate("MainWindow", "none"))
         self.update_firmware.setText(_translate("MainWindow", "Update Firmware"))
         self.firmware_cancel.setText(_translate("MainWindow", "Cancel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.neuron_firmware_tab), _translate("MainWindow", "Neuron Firmware"))
@@ -333,9 +335,9 @@ class Ui_MainWindow(object):
         self.magnet_level.setFormat(_translate("MainWindow", "%v"))
         self.magnet_restart.setText(_translate("MainWindow", "Restart test"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.magnet_tab), _translate("MainWindow", "Magnet"))
+        self.label_6.setText(_translate("MainWindow", "Defaults file:"))
         self.load_defaults.setText(_translate("MainWindow", "Load Defaults (will wipe all settings)"))
-        self.backup_settings.setText(_translate("MainWindow", "Backup settings"))
-        self.restore_settings.setText(_translate("MainWindow", "Restore settings"))
+        self.label_defaults_file.setText(_translate("MainWindow", "none"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.load_defaults_tab), _translate("MainWindow", "Defaults"))
         self.label_2.setText(_translate("MainWindow", "Keyscan"))
         self.label_3.setText(_translate("MainWindow", "Layout"))
@@ -347,5 +349,4 @@ class Ui_MainWindow(object):
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Logs"))
         self.actionCopy_log.setText(_translate("MainWindow", "Copy log"))
         self.actionClear_log.setText(_translate("MainWindow", "Clear log"))
-
 import image_rc

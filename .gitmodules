@@ -1,0 +1,3 @@
+[submodule "combined_tests/bazecore_parser"]
+	path = combined_tests/bazecore_parser
+	url = git@github.com:Dygmalab/python-parse-bazecore-config

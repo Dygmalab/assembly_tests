@@ -1,18 +1,20 @@
+#!/usr/bin/env python3
 import logging
 import subprocess
 import platform
 import argparse
-import mainwindow
 import sys
 import os
+import glob
+from bazecore_parser.parse import ParseBazeCoreJSON
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from serial_plug import SerialPlug
+import mainwindow
 
 MAGNET_THRESHOLD = 45
-DEFAULT_SETTINGS = "MP" # in the defaults dir there are a few options for the defaults
 
 SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
             "idleLeds.idleTimeLimit", "led.mode"]
@@ -52,8 +54,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         super(self.__class__, self).__init__()
 
     def setup(self):
-        self.setupUi(self) # gets defined in the UI file
         self.clipboard = QApplication.clipboard()
+        self.setupUi(self) 
 
         self.ser = SerialPlug()
         self.wd = wd
@@ -79,8 +81,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # load defaults
         self.load_defaults.clicked.connect(lambda: self.default_settings_clicked())
-        self.backup_settings.clicked.connect(lambda: self.backup_settings_clicked())
-        self.restore_settings.clicked.connect(lambda: self.restore_settings_clicked())
 
         # side fw updater
         self.verify_left.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_left_side"))
@@ -101,14 +101,24 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
-        self.choose_firmware.clicked.connect(lambda: self.choose_firmware_dialog())
         self.firmware_cancel.clicked.connect(lambda: self.select_info_tab())
         try:
-            self.firmware_file = os.path.join(self.wd, 'binaries', '2019-10-29-Raise-firmware.bin')
-            self.firmware_filename.setText(self.tr("Firmware file:") + os.path.basename(self.firmware_file))
-        except IOError as e:
+            self.firmware_file = glob.glob("*.bin")[0]
+            self.label_firmware_file.setText(os.path.basename(self.firmware_file))
+        except IndexError as e:
             logging.warning("couldn't find a default firmware")
             self.firmware_file = None
+
+        # defaults file
+        try:
+            self.defaults_file = glob.glob("*.json")[0]
+            self.label_defaults_file.setText(os.path.basename(self.defaults_file))
+            self.defaults = ParseBazeCoreJSON(self.defaults_file).parse_all()
+            self.load_defaults.setEnabled(True) 
+        except IndexError as e:
+            logging.warning("couldn't find defaults file")
+            self.defaults_file = None
+            self.load_defaults.setEnabled(False) 
 
         # remove tabs not available from command options
         for tab_name, tab_config in TAB_DEFS.items():
@@ -167,14 +177,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.tabWidget.setCurrentIndex(index)
         self.tab_changed(self.tabWidget.currentIndex())
 
-    def choose_firmware_dialog(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"Choose firmware file", "","Firmware Files (*.bin)", options=options)
-        if fileName:
-            self.firmware_file = fileName
-            self.firmware_filename.setText(self.tr("Firmware file:") + os.path.basename(self.firmware_file))
-   
     def bossa_update_firmware_clicked(self):
         logging.info("starting BOSSA firmware update with file %s" % self.firmware_file)
         if platform.system() == 'Linux':
@@ -197,40 +199,10 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     ################################################################################
 
     def default_settings_clicked(self):
-        for conf in SETTINGS:
-            file_path = os.path.join(self.wd, 'defaults', DEFAULT_SETTINGS + conf)
-            with open(file_path, 'r') as fh:
-                data = fh.readline()
-                data = data.strip()
-                self.ser.run_cmd("%s %s" % (conf, data))
-
-    def backup_settings_clicked(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self, "Select backup directory", options=options)
-        for conf in SETTINGS:
-            file_path = os.path.join(directory, conf)
-            with open(file_path, 'w') as fh:
-                data = self.ser.run_cmd(conf)
-                fh.write(data + "\n")
-                logging.info("backed up to %s" % (file_path))
-
-    def restore_settings_clicked(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        options |= QFileDialog.ShowDirsOnly
-        directory = QFileDialog.getExistingDirectory(self, "Select restore directory", options=options)
-        for conf in SETTINGS:
-            file_path = os.path.join(directory, conf)
-            try:
-                with open(file_path, 'r') as fh:
-                    data = fh.readline()
-                    data = data.strip()
-                    self.ser.run_cmd("%s %s" % (conf, data))
-                    logging.info("restoring from %s" % (file_path))
-            except IOError as e:
-                logging.warning("couldn't read backup file %s" % file_path)
+        logging.info("loading the defaults")
+        for default in self.defaults:
+            logging.info(default)
+            self.ser.run_cmd(default)
 
     # led tools
     ################################################################################
