@@ -25,4 +25,4 @@ script:
 after_script:
   - find dist build
   - pip3 install s3cmd
-  - s3cmd --recursive --access_key $ARTIFACTS_KEY --secret_key $ARTIFACTS_SECRET put dist s3://dygma-chrysalis/assembly_tests/$TRAVIS_BRANCH/ -vv
+  - s3cmd -v -d --recursive --access_key $ARTIFACTS_KEY --secret_key $ARTIFACTS_SECRET put dist s3://dygma-chrysalis/assembly_tests/$TRAVIS_BRANCH/ 
