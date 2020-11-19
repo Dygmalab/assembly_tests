@@ -17,18 +17,12 @@ import mainwindow
 
 MAGNET_THRESHOLD = 45
 
-SETTINGS = ["keymap.custom", "colormap.map", "palette", "keymap.onlyCustom", "hardware.keyscan", 
-            "idleLeds.idleTimeLimit", "led.mode"]
-
 TAB_DEFS = { 
-    "light_tab":          { "conn": "fw", "avail": ['master','chinese'] },
-    "led_tab":            {"conn": "fw", "avail": ['master'] },
+    "light_tab":          {"conn": "fw", "avail": ['master','chinese'] },
+    "function_tab":       {"conn": "fw", "avail": ['master','chinese'] },
     "magnet_tab":         {"conn": "fw", "avail": ['master','chinese'] },
     "load_defaults_tab":  {"conn": "fw", "avail": ['master','dvt','chinese'] },
     "neuron_firmware_tab":{"conn": "bl", "avail": ['master','dvt','chinese'] },
-    "side_firmware_tab":  {"conn": "fw", "avail": ['master','dvt'] },
-    "focus_tab":          {"conn": "fw", "avail": ['master'] },
-    "info_tab":           {"conn": "fw", "avail": ['master','dvt','chinese'] },
     }
 
 left_keys       = 33 # 32 for ANSI
@@ -71,29 +65,16 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.light_white.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 255 255"))
         self.light_off.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 0 0"))
 
+        # function mode
+        self.button_switch_test.clicked.connect(lambda: self.run_serial_cmd("led.mode 3"))
+
         # magnet buttons
         self.magnet_split.clicked.connect(self.get_split_clicked)
         self.magnet_joined.clicked.connect(self.get_joined_clicked)
         self.magnet_restart.clicked.connect(self.magnet_restart_clicked)
 
-        # individual led buttons and setup
-        self.current_led = 0
-        self.last_led = None
-        self.led_num.display(self.current_led)
-        self.led_next.clicked.connect(lambda: self.next_led(+1))
-        self.led_prev.clicked.connect(lambda: self.next_led(-1))
-
         # load defaults
         self.load_defaults.clicked.connect(lambda: self.default_settings_clicked())
-
-        # side fw updater
-        self.verify_left.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_left_side"))
-        self.verify_right.clicked.connect(lambda: self.run_serial_cmd("hardware.verify_right_side"))
-        self.flash_left.clicked.connect(lambda: self.run_serial_cmd("hardware.flash_left_side"))
-        self.flash_right.clicked.connect(lambda: self.run_serial_cmd("hardware.flash_right_side"))
-
-        # focus cmds
-        self.focus_cmd.returnPressed.connect(lambda: self.run_focus_cmd())
 
         # tab connections
         self.tabWidget.tabBarClicked.connect(self.tab_changed) # tabBarClicked only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
@@ -105,7 +86,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
-        self.firmware_cancel.clicked.connect(lambda: self.select_info_tab())
         try:
             self.firmware_file = glob.glob("*.bin")[0]
             self.label_firmware_file.setText(os.path.basename(self.firmware_file))
@@ -140,7 +120,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.check_serial_status()
 
         # start off with info tab
-        self.select_info_tab()
+        self.select_led_tab()
 
         self.show()
 
@@ -174,9 +154,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     # firmware
     ################################################################################
 
-    def select_info_tab(self):
+    def select_led_tab(self):
         # select another info tab - in all GUI versions
-        tab = self.findChild(QWidget, "info_tab")
+        tab = self.findChild(QWidget, "light_tab")
         index = self.tabWidget.indexOf(tab)
         self.tabWidget.setCurrentIndex(index)
         self.tab_changed(self.tabWidget.currentIndex())
