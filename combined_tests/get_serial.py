@@ -1,18 +1,10 @@
 import subprocess
 import sys
 import logging
+import usb.core
+import usb.util
 
 def get_serial():
-    logging.warning("setup for usb")
-    try:
-       import usb.core
-       import usb.util
-    except ImportError:
-       subprocess.check_call([sys.executable, "-m", "pip", "install", 'pyusb'])
-    finally:
-       import usb.core
-       import usb.util
-
     dev = usb.core.find(idProduct=0x2201)
     logging.warning(dev)
     try:
