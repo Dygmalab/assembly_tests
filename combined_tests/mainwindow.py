@@ -208,7 +208,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -223,7 +223,7 @@ class Ui_MainWindow(object):
         self.button_switch_test.setText(_translate("MainWindow", "Switch test mode"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.function_tab), _translate("MainWindow", "Function test"))
         self.label_5.setText(_translate("MainWindow", "Before flashing, put the keyboard in flashing mode: unplug cable, press escape and plug the cable. "))
-        self.label.setText(_translate("MainWindow", "Write the serial number in this field"))
+        self.label.setText(_translate("MainWindow", "Write the serial number in this field (all letters after DRYS)"))
         self.firmware_filename.setText(_translate("MainWindow", "Firmware file:"))
         self.label_firmware_file.setText(_translate("MainWindow", "none"))
         self.update_firmware.setText(_translate("MainWindow", "Update Firmware"))

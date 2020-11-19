@@ -56,9 +56,12 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.wd = wd
 
         # serial
-        self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
+        #self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
+        self.button_fetch_serial.clicked.connect(lambda: self.start_debug()) 
+        reg_ex = QRegExp("^[0-9]N[0-9]{5}")
+        self.serial_validator = QRegExpValidator(reg_ex, self.lineEdit_serial)
+        self.lineEdit_serial.setValidator(self.serial_validator)
 
-        # led tab buttons
         self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))
         self.light_green.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 255 0"))
         self.light_blue.clicked.connect(lambda: self.run_serial_cmd("led.setAll 0 0 255"))
@@ -309,7 +312,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # only allow firmware update button enabled if connected to bootloader
         if tab_name == "neuron_firmware_tab":
-            if self.ser.is_connected() and self.firmware_file is not None:
+            if self.ser.is_connected() and self.firmware_file is not None and self.lineEdit_serial.hasAcceptableInput():
                 self.update_firmware.setEnabled(True) 
             else:
                 self.update_firmware.setEnabled(False) 

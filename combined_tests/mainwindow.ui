@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="light_tab">
          <attribute name="title">
@@ -130,7 +130,7 @@
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Write the serial number in this field</string>
+               <string>Write the serial number in this field (all letters after DRYS)</string>
               </property>
              </widget>
             </item>
