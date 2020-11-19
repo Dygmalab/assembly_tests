@@ -6,7 +6,8 @@ import argparse
 import sys
 import os
 import glob
-from bazecore_parser.parse import ParseBazeCoreJSON
+from bazecore_parser import ParseBazeCoreJSON
+from get_serial import get_serial
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -59,6 +60,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.ser = SerialPlug()
         self.wd = wd
+
+        # serial
+        self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
 
         # led tab buttons
         self.light_red.clicked.connect(lambda: self.run_serial_cmd("led.setAll 255 0 0"))

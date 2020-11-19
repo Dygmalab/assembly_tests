@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>7</number>
         </property>
         <widget class="QWidget" name="neuron_firmware_tab">
          <attribute name="title">
@@ -488,6 +488,13 @@
           </item>
          </layout>
         </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_fetch_serial">
+        <property name="text">
+         <string>fetch serial</string>
+        </property>
        </widget>
       </item>
       <item>

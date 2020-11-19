@@ -271,6 +271,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addLayout(self.horizontalLayout_7)
         self.tabWidget.addTab(self.info_tab, "")
         self.verticalLayout.addWidget(self.tabWidget)
+        self.button_fetch_serial = QtWidgets.QPushButton(self.centralWidget)
+        self.button_fetch_serial.setObjectName("button_fetch_serial")
+        self.verticalLayout.addWidget(self.button_fetch_serial)
         self.log_messages = QtWidgets.QPlainTextEdit(self.centralWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -300,7 +303,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(7)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -346,6 +349,7 @@ class Ui_MainWindow(object):
         self.layout_label.setText(_translate("MainWindow", "TextLabel"))
         self.version_label.setText(_translate("MainWindow", "TextLabel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.info_tab), _translate("MainWindow", "Info"))
+        self.button_fetch_serial.setText(_translate("MainWindow", "fetch serial"))
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Logs"))
         self.actionCopy_log.setText(_translate("MainWindow", "Copy log"))
         self.actionClear_log.setText(_translate("MainWindow", "Clear log"))
