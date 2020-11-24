@@ -56,8 +56,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.wd = wd
 
         # serial
-        #self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
-        self.button_fetch_serial.clicked.connect(lambda: self.start_debug()) 
+        self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
+        # self.button_fetch_serial.clicked.connect(lambda: self.start_debug()) 
         reg_ex = QRegExp("^[0-9]N[0-9]{5}")
         self.serial_validator = QRegExpValidator(reg_ex, self.lineEdit_serial)
         self.lineEdit_serial.setValidator(self.serial_validator)
