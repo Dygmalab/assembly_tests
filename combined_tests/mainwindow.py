@@ -208,7 +208,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
         self.light_blue.setText(_translate("MainWindow", "Blue"))
         self.light_green.setText(_translate("MainWindow", "Green"))
         self.light_off.setText(_translate("MainWindow", "Off"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.light_tab), _translate("MainWindow", "All LEDs"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.light_tab), _translate("MainWindow", "LED test"))
         self.button_switch_test.setText(_translate("MainWindow", "Switch test mode"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.function_tab), _translate("MainWindow", "Function test"))
         self.label_5.setText(_translate("MainWindow", "Before flashing, put the keyboard in flashing mode: unplug cable, press escape and plug the cable. "))
