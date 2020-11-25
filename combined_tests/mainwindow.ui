@@ -320,13 +320,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="button_fetch_serial">
-        <property name="text">
-         <string>fetch serial</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPlainTextEdit" name="log_messages">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
