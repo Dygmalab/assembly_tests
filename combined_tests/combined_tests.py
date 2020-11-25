@@ -354,7 +354,6 @@ if __name__ == '__main__':
     DEBUG 10
     NOTSET 0
     """
-    args.verbose = 40 - (10*args.verbose) if args.verbose > 0 else 0
 
     log = logging.getLogger('')
     log.setLevel(logging.DEBUG)
@@ -362,7 +361,7 @@ if __name__ == '__main__':
     ch = logging.StreamHandler()
     formatter = logging.Formatter('%(levelname)10s - %(message)s')
     ch.setFormatter(formatter)
-    ch.setLevel(args.verbose)
+    ch.setLevel(logging.INFO)
     log.addHandler(ch)
 
     qtlog = QTLogHandler(form)
