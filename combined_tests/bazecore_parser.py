@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 import json
+import logging
 
 class ParseBazeCoreJSON():
 
     def __init__(self, filename):
         # load the layer file
-        with open(filename) as fh:
-            config = json.load(fh)
+        with open(filename, encoding="utf8") as fh:
+            try:
+                config = json.load(fh)
+            except Exception as e:
+                logging.error(e)
+                exit(1)
+                    
 
             assert 'keymap' in config
             assert 'onlyCustom' in config['keymap']
