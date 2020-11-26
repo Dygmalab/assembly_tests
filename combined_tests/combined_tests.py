@@ -56,7 +56,6 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.wd = wd
 
         # serial
-        self.button_fetch_serial.clicked.connect(lambda: get_serial()) 
         reg_ex = QRegExp("^[0-9][Nn][0-9]{5}")
         self.serial_validator = QRegExpValidator(reg_ex, self.lineEdit_serial)
         self.lineEdit_serial.setValidator(self.serial_validator)
@@ -88,6 +87,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # neuron fw
         self.update_firmware.clicked.connect(lambda: self.bossa_update_firmware_clicked())
+        self.firmware_cancel.clicked.connect(lambda: self.select_tab("magnet_tab"))
         try:
             self.firmware_file = glob.glob("*.bin")[0]
             self.label_firmware_file.setText(os.path.basename(self.firmware_file))
@@ -122,7 +122,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         self.check_serial_status()
 
         # start off with info tab
-        self.select_led_tab()
+        self.select_tab("light_tab")
 
         self.show()
 
@@ -156,9 +156,9 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     # firmware
     ################################################################################
 
-    def select_led_tab(self):
-        # select another info tab - in all GUI versions
-        tab = self.findChild(QWidget, "light_tab")
+    def select_tab(self, tab_name):
+        # select another tab - in all GUI versions
+        tab = self.findChild(QWidget, tab_name)
         index = self.tabWidget.indexOf(tab)
         self.tabWidget.setCurrentIndex(index)
         self.tab_changed(self.tabWidget.currentIndex())
@@ -180,6 +180,12 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         logging.info(" ".join(command_list))
         result = subprocess.run(command_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         logging.info(result.stdout.decode('utf-8'))
+
+        if result.returncode == 0:
+            # change to next tab
+            logging.info("done ok")
+            self.select_tab("magnet_tab")
+
 
     # defaults
     ################################################################################
@@ -272,6 +278,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.ser.run_cmd("led.mode 8") # joint effect mode
             self.ser.run_cmd("led.setAll 0 0 0")
             self.next_led(0)
+        elif tab_name == "load_defaults_tab":
+            self.ser.run_cmd("led.mode 0") # normal leds
         elif tab_name == "info_tab":
             self.version_label.setText(self.run_serial_cmd("hardware.firmware"))
             self.keyscan_label.setText(self.run_serial_cmd("hardware.keyscan"))

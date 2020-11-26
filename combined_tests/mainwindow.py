@@ -106,6 +106,9 @@ class Ui_MainWindow(object):
         self.update_firmware.setEnabled(False)
         self.update_firmware.setObjectName("update_firmware")
         self.verticalLayout_4.addWidget(self.update_firmware)
+        self.firmware_cancel = QtWidgets.QPushButton(self.neuron_firmware_tab)
+        self.firmware_cancel.setObjectName("firmware_cancel")
+        self.verticalLayout_4.addWidget(self.firmware_cancel)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
@@ -205,7 +208,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -224,6 +227,7 @@ class Ui_MainWindow(object):
         self.firmware_filename.setText(_translate("MainWindow", "Firmware file:"))
         self.label_firmware_file.setText(_translate("MainWindow", "none"))
         self.update_firmware.setText(_translate("MainWindow", "Update Firmware"))
+        self.firmware_cancel.setText(_translate("MainWindow", "cancel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.neuron_firmware_tab), _translate("MainWindow", "Flash Firmware"))
         self.magnet_pass.setText(_translate("MainWindow", "Pass"))
         self.magnet_fail.setText(_translate("MainWindow", "Fail"))
