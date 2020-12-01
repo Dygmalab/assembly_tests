@@ -5,7 +5,10 @@ import platform
 import argparse
 import sys
 import os
+import json
 import glob
+import time
+from datetime import datetime
 from bazecore_parser import ParseBazeCoreJSON
 from get_serial import get_serial
 
@@ -124,6 +127,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # start off with info tab
         self.select_tab("light_tab")
 
+        self.write_serial_file()
         self.show()
 
     # serial command utilities
@@ -329,6 +333,28 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
 
         self.last_serial_check = self.ser.is_connected()
+
+    def write_serial_file(self):
+        mp_number = 3
+        firmware_version = "0.2.1"
+        serial_number = 10
+        samd_serial = "ABCDEFA" * 4
+
+        now = datetime.now() # current date and time
+        # FileName: HHmmDDMMYYYY+SAMD21SerialNumberContents:
+        filename = now.strftime("%H%M_%d%m%Y_") + samd_serial + ".json"
+        logging.info("writing file to %s" % filename)
+        timestamp = datetime.timestamp(now)
+
+        contents = { 
+            "timestamp"         : timestamp, # “unix timestamp”,
+            "serialNumber"      : serial_number,
+            "samdSerialNumber"  : samd_serial,
+            "MP"                : mp_number, #3(not a fixed number, configurable with a file),
+            "FWVersion"         : firmware_version, #“0.2.X”
+        } 
+        with open(filename, 'w') as outfile:
+            json.dump(contents, outfile)
 
 
 if __name__ == '__main__':
