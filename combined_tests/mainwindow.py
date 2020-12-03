@@ -165,8 +165,6 @@ class Ui_MainWindow(object):
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setSpacing(6)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem2, 3, 0, 1, 1)
         self.label_6 = QtWidgets.QLabel(self.load_defaults_tab)
         self.label_6.setObjectName("label_6")
         self.gridLayout_3.addWidget(self.label_6, 0, 0, 1, 1)
@@ -176,6 +174,11 @@ class Ui_MainWindow(object):
         self.label_defaults_file = QtWidgets.QLabel(self.load_defaults_tab)
         self.label_defaults_file.setObjectName("label_defaults_file")
         self.gridLayout_3.addWidget(self.label_defaults_file, 1, 0, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem2, 3, 0, 1, 1)
+        self.button_finish = QtWidgets.QPushButton(self.load_defaults_tab)
+        self.button_finish.setObjectName("button_finish")
+        self.gridLayout_3.addWidget(self.button_finish, 4, 0, 1, 1)
         self.horizontalLayout_3.addLayout(self.gridLayout_3)
         self.tabWidget.addTab(self.load_defaults_tab, "")
         self.verticalLayout.addWidget(self.tabWidget)
@@ -208,7 +211,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuDygma_Raise_Assembly_Tests.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -239,6 +242,7 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Defaults file:"))
         self.load_defaults.setText(_translate("MainWindow", "Load Defaults (will wipe all settings)"))
         self.label_defaults_file.setText(_translate("MainWindow", "none"))
+        self.button_finish.setText(_translate("MainWindow", "Finalise and save data"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.load_defaults_tab), _translate("MainWindow", "Load layout"))
         self.menuDygma_Raise_Assembly_Tests.setTitle(_translate("MainWindow", "Logs"))
         self.actionCopy_log.setText(_translate("MainWindow", "Copy log"))
