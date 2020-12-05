@@ -82,6 +82,7 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         # finish button
         self.button_finish.clicked.connect(lambda: self.finish())
+        self.button_finish.setEnabled(False)
 
         # tab connections
         self.tabWidget.tabBarClicked.connect(self.tab_changed) # tabBarClicked only triggered on an actual click unlike currentChanged which gets triggered when a tab is updated in SW
@@ -205,6 +206,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
     def finish(self):
         self.write_serial_file()
         self.select_tab("light_tab")
+        self.lineEdit_serial.setText("")
+        self.button_finish.setEnabled(False)
 
     def write_serial_file(self):
         samd_serial =self.run_serial_cmd("hardware.chip_id")
@@ -365,6 +368,11 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
         # update the magnet level if on the magnet page
         if tab_name == "magnet_tab" and self.ser.is_connected():
             self.magnet_level.setValue(int(self.ser.run_cmd("hardware.joint", quiet=True)))
+
+
+        if tab_name == "load_defaults_tab":
+            if self.ser.is_connected() and self.lineEdit_serial.hasAcceptableInput():
+                self.button_finish.setEnabled(True)
 
         self.last_serial_check = self.ser.is_connected()
 
