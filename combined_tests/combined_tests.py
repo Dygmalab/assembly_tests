@@ -231,10 +231,8 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
 
         full_path = os.path.join(self.wd, 'results', filename)
 
-        if not os.path.exists(os.path.join(self.wd, 'results')):
-            os.makedirs('results')
-
         with open(full_path, 'w') as outfile:
+            logging.info("writing json to %s" % full_path)
             json.dump(contents, outfile)
 
     # led tools
