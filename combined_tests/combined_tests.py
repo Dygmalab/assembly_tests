@@ -229,10 +229,14 @@ class CombinedTests(QMainWindow, mainwindow.Ui_MainWindow):
             "FWVersion"         : firmware_version, #“0.2.X”
         } 
 
-        full_path = os.path.join(self.wd, 'results', filename)
+        full_path = os.path.join('results', filename)
 
+        if not os.path.exists('results'):
+            logging.info("making directory")
+            os.makedirs('results')
+
+        logging.info("dumping json to %s" % full_path)
         with open(full_path, 'w') as outfile:
-            logging.info("writing json to %s" % full_path)
             json.dump(contents, outfile)
 
     # led tools
